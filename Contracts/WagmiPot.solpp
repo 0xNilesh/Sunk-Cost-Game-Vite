@@ -3,9 +3,9 @@ pragma soliditypp ^0.8.0;
 
 contract WagmiPot {
     /* Events */
-    event PotCreated(address _from, uint256 _potIndex);
+    event PotCreated(address _from, uint256 _potIndex, uint256 time);
     event RewardClaimed(address _from, uint256 _potIndex);
-    event PotBought(address _from, uint256 _potIndex, uint256 potCurrentPrice, uint256 potEndTime);
+    event PotBought(address _from, uint256 _potIndex, uint256 potCurrentPrice, uint256 potEndTime, uint256 time);
     /* ------ */
   
     /* Variables */
@@ -57,7 +57,7 @@ contract WagmiPot {
       pot.end = _initialTimer + pot.start;
       pot.claimed = false;
 
-      emit PotCreated(msg.sender, PotId);
+      emit PotCreated(msg.sender, PotId, block.timestamp);
       return PotId;
     }
 
@@ -65,24 +65,25 @@ contract WagmiPot {
       return block.timestamp;
     }
 
-    function buyPot(uint256 _potIndex) public payable {
-      require(Pots[_potIndex].end >= block.timestamp, "Pot Expired");
+    function buyPot(uint256 _potIndex) public payable returns (uint256) {
+      // require(Pots[_potIndex].end >= block.timestamp, "Pot Expired");
       require(msg.token == Pots[_potIndex].tokenId, "You can't buy this pot with this token");
       require(msg.value >= Pots[_potIndex].currentPrice, "Pot price is more than amount sent");
 
-      if(Pots[_potIndex].end - block.timestamp < Pots[_potIndex].maxTimerLimit) 
+      if(Pots[_potIndex].end >= block.timestamp && (Pots[_potIndex].end - block.timestamp <= Pots[_potIndex].maxTimerLimit)) 
         Pots[_potIndex].end += Pots[_potIndex].extensionAmount;
       Pots[_potIndex].currentPrice += Pots[_potIndex].buyInIncrementAmount;
       /* burn */
       Pots[_potIndex].potAmount += msg.value;
       Pots[_potIndex].winner = msg.sender;
 
-      emit PotBought(msg.sender, _potIndex, Pots[_potIndex].currentPrice, Pots[_potIndex].end);
+      emit PotBought(msg.sender, _potIndex, Pots[_potIndex].currentPrice, Pots[_potIndex].end, block.timestamp);
+      return block.timestamp;
     }
 
     function claimReward(uint256 _potIndex) public {
       require(Pots[_potIndex].claimed != true, "Reward is already claimed");
-      require(Pots[_potIndex].end >= block.timestamp, "Pot is not expired yet");
+      require(Pots[_potIndex].end < block.timestamp, "Pot is not expired yet");
       require(msg.sender == Pots[_potIndex].winner, "Unfortunately, you are not the winner of this Pot");
 
       uint256 amountToSend = Pots[_potIndex].potAmount;
