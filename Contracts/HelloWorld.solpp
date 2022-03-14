@@ -1,0 +1,10 @@
+// SPDX-License-Identifier: GPL-3.0
+pragma soliditypp ^0.8.0;
+
+contract HelloWorld {
+    event MyLog(address indexed addr, string log);
+    function sayHello(address dest) payable public {
+        // dest.transfer(msg.token, msg.value);
+        emit MyLog(dest, "Hello! Have some Vite!");
+    }
+}
