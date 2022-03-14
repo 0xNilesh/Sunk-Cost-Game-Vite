@@ -1,0 +1,82 @@
+// SPDX-License-Identifier: GPL-3.0
+pragma soliditypp >=0.8.0;
+
+contract WagmiPot {
+    /* Events */
+    event PotCreated(address _from, uint _potIndex);
+    event RewardClaimed(address _from, uint _potIndex);
+    /* ------ */
+  
+    /* Variables */
+    uint public potCreationFee;
+    address public owner;
+
+    uint public totalPotsCreated;
+
+    struct Pot {
+      address PotOwner;
+      uint maxTimerLimit;
+      uint buyInIncrementAmount;
+      uint burnAmount;
+      uint extensionAmount;
+      address winner;
+      uint potAmount;
+      uint currentPrice;
+      vitetoken tokenId;
+      uint start;
+      uint end;
+      bool claimed;
+    }
+
+    mapping(uint => Pot) public Pots;
+    /* -------- */
+
+    constructor (uint creationFee) {
+        potCreationFee = creationFee;
+        owner = msg.sender;
+        totalPotsCreated = 0;
+    }
+
+    function createPot(uint _maxTimerLimit, uint _buyInIncrementAmount, uint _burnAmount, uint _extensionAmount) public payable returns (uint) {
+      require(msg.value >= potCreationFee, "Amount sent is less than the fee required");
+
+      uint PotId = totalPotsCreated++;
+      Pot storage pot = Pots[PotId];
+      pot.maxTimerLimit = _maxTimerLimit;
+      pot.buyInIncrementAmount = _buyInIncrementAmount;
+      pot.burnAmount = _burnAmount;
+      pot.extensionAmount = _extensionAmount;
+      pot.currentPrice = _buyInIncrementAmount;
+      pot.PotOwner = msg.sender;
+      pot.winner = msg.sender;
+      pot.potAmount = 0;
+      pot.tokenId = msg.token;
+      pot.start = block.timestamp;
+      pot.end = _maxTimerLimit + pot.start;
+      pot.claimed = false;
+
+      emit PotCreated(msg.sender, PotId);
+      return PotId;
+    }
+
+    function buyPot(uint _potIndex) public payable {
+      require(Pots[_potIndex].end >= block.timestamp, "Pot Expired");
+      require(msg.value >= Pots[_potIndex].currentPrice, "Pot price is more than amount sent");
+
+      Pots[_potIndex].end += Pots[_potIndex].extensionAmount;
+      Pots[_potIndex].currentPrice += Pots[_potIndex].buyInIncrementAmount;
+      /* burn */
+      Pots[_potIndex].potAmount += msg.value;
+      Pots[_potIndex].winner = msg.sender;
+    }
+
+    function claimReward(uint _potIndex) public {
+      require(Pots[_potIndex].end >= block.timestamp, "Pot is not expired yet");
+      require(msg.sender == Pots[_potIndex].winner, "Unfortunately, you are not the winner of this Pot");
+
+      uint amountToSend = Pots[_potIndex].potAmount;
+      Pots[_potIndex].potAmount = 0;
+      payable(msg.sender).transfer(Pots[_potIndex].tokenId, amountToSend);
+      emit RewardClaimed(msg.sender, _potIndex);
+    }
+}

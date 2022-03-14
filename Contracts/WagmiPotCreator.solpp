@@ -1,0 +1,50 @@
+// SPDX-License-Identifier: GPL-3.0
+pragma soliditypp ^0.4.3;
+
+import "./WagmiPot.solpp";
+
+contract WagmiPotCreator {
+    event PotCreated(address _from, uint _potIndex);
+
+    /* Variables */
+    uint public potCreationFee;
+    address public owner;
+
+    uint public totalPotsCreated;
+    WagmiPot[] public deployedPots;
+    // mapping(uint => address) potsAddress;
+
+    /* --------- */
+
+    constructor (uint creationFee) public {
+        potCreationFee = creationFee;
+        owner = msg.sender;
+        totalPotsCreated = 0;
+    }
+
+    /*     MODIFIERS */
+//     modifier minValue() {
+      
+//       _;
+//    }
+
+   modifier onlyOwner() {
+       require(msg.sender == owner, "Only owner can call this function");
+       _;
+   }
+
+    /* ------------   */
+
+    function deployPot(uint _maxTimerLimit, uint _buyInIncrementAmount, uint _burnAmount, uint _extensionAmount) public payable {
+        require(msg.amount >= potCreationFee, "Amount sent is less than minimum Fee to create a Pot");
+        
+        WagmiPot newPot = new WagmiPot(_maxTimerLimit, _buyInIncrementAmount, _burnAmount, _extensionAmount, msg.sender);
+
+        deployedPots.push(newPot);
+        totalPotsCreated++;
+
+        emit PotCreated(msg.sender, totalPotsCreated-1);
+    }
+
+    
+}
