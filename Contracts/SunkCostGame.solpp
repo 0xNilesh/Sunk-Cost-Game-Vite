@@ -1,14 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0
 /// @title Grants Round 13 Hackathon Sunk Cost Game
 /// @author Aman & Nilesh
-/// @dev Incentives for Protocol & Pot Creator
+/// @dev Incentives for Pot Creator & Token Info & Burn Functionality 
+
 pragma soliditypp ^0.8.0;
 
 /* INTERFACES */
 interface TokenIssuanceContract {
 
     /// @notice To burn certain amount of a token
-    function Burn() external payable;  
+    function Burn() external payable; 
+
+    /// @notice Get All Info related to a token
+    function GetTokenInformation(vitetoken _tokenId) external; 
 }
 /* ---------- */
 
@@ -49,26 +53,34 @@ contract SunkCostGame {
     /* -------- */
 
     /* MODIFIERS */
+
+    /// @notice Pot existance check
     modifier potExists(uint256 _potIndex) {
       require(_potIndex < totalPotsCreated , "Pot does not exist!");
       _;
     }
+
+    /// @notice Owner Restricted Check
     modifier restricted {
       require(msg.sender == owner , "Restricted to owner!");
       _;
    }
    /* -------- */
 
-   /* PRIVATE Functions */
+   /* SETTERS */
+
+    /// @notice Set New Owner
     function setOwner(address _newOwnerAddress) public restricted {
       owner = _newOwnerAddress;
     }
 
+    /// @notice Set New Pot Creation Fee
     function setFee(uint256 _fee) public restricted returns (uint256) {
       potCreationFee = _fee;
       return potCreationFee;
     }
 
+    /// @notice Claim Protocol/Contract Fee
     function claimFee() public restricted {
       uint256 fee = totalFeeAccumulated;
       totalFeeAccumulated = 0;
@@ -76,22 +88,35 @@ contract SunkCostGame {
     }
    /* ----------------- */
 
-   /* Getters */
+   /* GETTERS */
     function endTime(uint256 _potIndex) public view returns (uint256) {
       return Pots[_potIndex].end;
     }
    /* ------- */
 
-   //Fix -> Implementation for Protocol & Pot Creator Incentives
-
     /// @notice Initailize the contract with details of owner & Pot creation fee
-    /// @param creationFee Initial buy in or Fee to create a Pot
-    constructor (uint256 creationFee) {
-        potCreationFee = creationFee;
+    /// @param _creationFee Initial buy in or Fee to create a Pot
+    constructor (uint256 _creationFee) {
+        potCreationFee = _creationFee;
         owner = msg.sender;
         totalPotsCreated = 0;
     }
 
+    /// @notice Invoke/Call to get info of token
+    /// @param _tokenId
+    function invoke(vitetoken _tokenId) external {
+      TokenIssuance.GetTokenInformation(_tokenId);
+    }
+
+    /// @notice Get data for any token
+    function GetTokenInformationCallback(bytes32 id, vitetoken tokenId, bool exist, bool isReIssuable, string calldata tokenName, string calldata tokenSymbol, uint totalSupply, uint8 decimals, uint maxSupply, bool isOwnerBurnOnly, uint16 index, address ownerAddress) external {
+      // Process the data
+    }
+
+    /// @notice Send Extra Amount back to player
+    /// @param _tokenId Token Id that needs to be sent
+    /// @param _amount Amount to be sent
+    /// @param _to Player Address
     function sendExtraAmountBack(vitetoken _tokenId, uint256 _amount, address _to) private {
       payable(_to).transfer(_tokenId, _amount);
     }
@@ -127,10 +152,9 @@ contract SunkCostGame {
       pot.end = _initialTimer + pot.start;
       pot.claimed = false;
       totalFeeAccumulated += potCreationFee;
-
-      // send extra fee back to the user
+      
       sendExtraAmountBack(viteTokenId, msg.value-potCreationFee, msg.sender);
-
+      
       emit PotCreated(msg.sender, PotId, block.timestamp);
       return PotId;
     }
@@ -142,26 +166,23 @@ contract SunkCostGame {
       require(msg.token == Pots[_potIndex].tokenId, "You can't buy this pot with this token");
       require(msg.value >= Pots[_potIndex].currentPrice, "Pot price is more than amount sent");
 
-      //Fix logic if more amount is sent
-
       if(Pots[_potIndex].end - block.timestamp <= Pots[_potIndex].maxTimerLimit){
           if(Pots[_potIndex].end + Pots[_potIndex].extensionAmount >= block.timestamp + Pots[_potIndex].maxTimerLimit)
             Pots[_potIndex].end = block.timestamp + Pots[_potIndex].maxTimerLimit;
           else
             Pots[_potIndex].end += Pots[_potIndex].extensionAmount;
       }
-
+      
       Pots[_potIndex].potAmount += Pots[_potIndex].currentPrice;
       Pots[_potIndex].winner = msg.sender;
-
-      // send extra fee back to the user
+      
       sendExtraAmountBack(Pots[_potIndex].tokenId, msg.value-Pots[_potIndex].currentPrice, msg.sender);
-
+      
       Pots[_potIndex].currentPrice += Pots[_potIndex].buyInIncrementAmount;
-    
-      //Burn
+      
+      //Burn Token
       TokenIssuance.Burn{value: (Pots[_potIndex].burnAmount) , token : Pots[_potIndex].tokenId}();
-
+      
       emit PotBought(msg.sender, _potIndex, Pots[_potIndex].currentPrice, Pots[_potIndex].end, block.timestamp);
     }
 
