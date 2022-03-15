@@ -4,10 +4,6 @@
 /// @dev Incentives for Protocol & Pot Creator
 pragma soliditypp ^0.8.0;
 
-/* NOTE 
-  Wherever there is payable function, we need to multiply (10^number of decimals) of token into amount
-/*
-
 /* INTERFACES */
 interface TokenIssuanceContract {
 
@@ -164,7 +160,7 @@ contract SunkCostGame {
       Pots[_potIndex].currentPrice += Pots[_potIndex].buyInIncrementAmount;
     
       //Burn
-      TokenIssuance.Burn{value: (Pots[_potIndex].burnAmount * 1e18) , token : Pots[_potIndex].tokenId}();
+      TokenIssuance.Burn{value: (Pots[_potIndex].burnAmount) , token : Pots[_potIndex].tokenId}();
 
       emit PotBought(msg.sender, _potIndex, Pots[_potIndex].currentPrice, Pots[_potIndex].end, block.timestamp);
     }
