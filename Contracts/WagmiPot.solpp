@@ -1,13 +1,21 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma soliditypp ^0.8.0;
 
+/* Interfaces */
+interface TokenIssuanceContract {
+    // function Burn(vitetoken tokenId, uint256 amount) external payable;
+    function Burn() external payable;  
+}
+/* ---------- */
+
 contract WagmiPot {
     /* Events */
+    event tokenInfo(vitetoken tokenInfo);
     event PotCreated(address _from, uint256 _potIndex, uint256 time);
     event RewardClaimed(address _from, uint256 _potIndex);
     event PotBought(address _from, uint256 _potIndex, uint256 potCurrentPrice, uint256 potEndTime, uint256 time);
     /* ------ */
-  
+
     /* Variables */
     uint256 public potCreationFee;
     address public owner;
@@ -30,6 +38,8 @@ contract WagmiPot {
     }
 
     mapping(uint256 => Pot) public Pots;
+
+    TokenIssuanceContract TokenIssuance = TokenIssuanceContract("vite_000000000000000000000000000000000000000595292d996d");
     /* -------- */
 
     constructor (uint256 creationFee) {
@@ -66,7 +76,7 @@ contract WagmiPot {
     }
 
     function buyPot(uint256 _potIndex) public payable returns (uint256) {
-      // require(Pots[_potIndex].end >= block.timestamp, "Pot Expired");
+      require(Pots[_potIndex].end >= block.timestamp, "Pot Expired");
       require(msg.token == Pots[_potIndex].tokenId, "You can't buy this pot with this token");
       require(msg.value >= Pots[_potIndex].currentPrice, "Pot price is more than amount sent");
 
@@ -74,9 +84,15 @@ contract WagmiPot {
         Pots[_potIndex].end += Pots[_potIndex].extensionAmount;
       Pots[_potIndex].currentPrice += Pots[_potIndex].buyInIncrementAmount;
       /* burn */
+      // vitetoken.burn(Pots[_potIndex].tokenId, Pots[_potIndex].burnAmount);
+      // TokenIssuance.Burn(Pots[_potIndex].tokenId, Pots[_potIndex].burnAmount);
+      TokenIssuance.Burn{value: (Pots[_potIndex].burnAmount * 1e18)}();
+
+
       Pots[_potIndex].potAmount += msg.value;
       Pots[_potIndex].winner = msg.sender;
 
+      emit tokenInfo(msg.token);
       emit PotBought(msg.sender, _potIndex, Pots[_potIndex].currentPrice, Pots[_potIndex].end, block.timestamp);
       return block.timestamp;
     }
