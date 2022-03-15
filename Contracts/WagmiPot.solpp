@@ -1,25 +1,29 @@
 // SPDX-License-Identifier: GPL-3.0
+/// @title Grants Round 13 Hackathon Sunk Cost Game
+/// @author Aman & Nilesh
+
 pragma soliditypp ^0.8.0;
 
-/* Interfaces */
+/* INTERFACES */
 interface TokenIssuanceContract {
-    // function Burn(vitetoken tokenId, uint256 amount) external payable;
+
+    /// @notice To burn certain amount of a token
     function Burn() external payable;  
 }
 /* ---------- */
 
-contract WagmiPot {
-    /* Events */
+contract SunkCostGame {
+
+    /* EVENTS */
     event tokenInfo(vitetoken tokenInfo);
     event PotCreated(address _from, uint256 _potIndex, uint256 time);
     event RewardClaimed(address _from, uint256 _potIndex);
     event PotBought(address _from, uint256 _potIndex, uint256 potCurrentPrice, uint256 potEndTime, uint256 time);
     /* ------ */
 
-    /* Variables */
+    /* VARIABLES */
     uint256 public potCreationFee;
     address public owner;
-
     uint256 public totalPotsCreated;
 
     struct Pot {
@@ -42,15 +46,39 @@ contract WagmiPot {
     TokenIssuanceContract TokenIssuance = TokenIssuanceContract("vite_000000000000000000000000000000000000000595292d996d");
     /* -------- */
 
+    /* MODIFIERS */
+    modifier potExists(uint256 _potIndex) {
+      require(_potIndex < totalPotsCreated , "Pot does not exist!");
+      _;
+    }
+    modifier restricted {
+      require(msg.sender == owner , "Restricted to owner!");
+      _;
+   }
+   /* -------- */
+
+   //Fix -> Implementation for Protocol & Pot Creator Incentives
+
+    /// @notice Initailize the contract with details of owner & Pot creation fee
+    /// @param creationFee Initial buy in or Fee to create a Pot
     constructor (uint256 creationFee) {
         potCreationFee = creationFee;
         owner = msg.sender;
         totalPotsCreated = 0;
     }
 
+    /// @notice Create a New Pot
+    /// @param _initialTimer Inital Timer for which Pot remains Active
+    /// @param _maxTimerLimit Max Timer Limit push back by players
+    /// @param _buyInIncrementAmount Increment Amount for each buy in by Player
+    /// @param _burnAmount Amount to be burned
+    /// @param _extensionAmount Timer extension at every buy in
+    /// @return Id of Pot Created
     function createPot(uint256 _initialTimer, uint256 _maxTimerLimit, uint256 _buyInIncrementAmount, uint256 _burnAmount, uint256 _extensionAmount) public payable returns (uint256) {
       require(msg.value >= potCreationFee, "Amount sent is less than the fee required");
       require(_initialTimer >= _maxTimerLimit, "Initial timer must be more than equal to max timer limit");
+      //fix check for burn < incre amount
+      //fix check if token is burnable or not then only u can set the burn Property
 
       uint256 PotId = totalPotsCreated++;
       Pot storage pot = Pots[PotId];
@@ -71,35 +99,39 @@ contract WagmiPot {
       return PotId;
     }
 
-    function viewTime() view public returns (uint256) {
-      return block.timestamp;
-    }
+    // function viewTime() view public returns (uint256) {
+    //   return block.timestamp;
+    // }
 
-    function buyPot(uint256 _potIndex) public payable returns (uint256) {
-      require(Pots[_potIndex].end >= block.timestamp, "Pot Expired");
+    /// @notice Buy any active Pot
+    /// @param _potIndex Index or ID of Pot for buy in
+    function buyPot(uint256 _potIndex) public payable potExists(_potIndex) {
+      require(Pots[_potIndex].end >= block.timestamp, "Pot Expired!");
       require(msg.token == Pots[_potIndex].tokenId, "You can't buy this pot with this token");
       require(msg.value >= Pots[_potIndex].currentPrice, "Pot price is more than amount sent");
 
-      if(Pots[_potIndex].end >= block.timestamp && (Pots[_potIndex].end - block.timestamp <= Pots[_potIndex].maxTimerLimit)) 
+      //fix logic if more amount is sent
+
+      //fix to not increase than maxlimit
+      if(Pots[_potIndex].end - block.timestamp <= Pots[_potIndex].maxTimerLimit) 
         Pots[_potIndex].end += Pots[_potIndex].extensionAmount;
       Pots[_potIndex].currentPrice += Pots[_potIndex].buyInIncrementAmount;
-      /* burn */
-      // vitetoken.burn(Pots[_potIndex].tokenId, Pots[_potIndex].burnAmount);
-      // TokenIssuance.Burn(Pots[_potIndex].tokenId, Pots[_potIndex].burnAmount);
+    
+      //fix burn logic
       TokenIssuance.Burn{value: (Pots[_potIndex].burnAmount * 1e18)}();
-
 
       Pots[_potIndex].potAmount += msg.value;
       Pots[_potIndex].winner = msg.sender;
 
       emit tokenInfo(msg.token);
       emit PotBought(msg.sender, _potIndex, Pots[_potIndex].currentPrice, Pots[_potIndex].end, block.timestamp);
-      return block.timestamp;
     }
 
-    function claimReward(uint256 _potIndex) public {
-      require(Pots[_potIndex].claimed != true, "Reward is already claimed");
-      require(Pots[_potIndex].end < block.timestamp, "Pot is not expired yet");
+    /// @notice Claim the Reward of the Pot
+    /// @param _potIndex Index or ID of Pot whose reward is to be claimed
+    function claimReward(uint256 _potIndex) public potExists(_potIndex) {
+      require(Pots[_potIndex].claimed != true, "Reward Already Claimed!");
+      require(Pots[_potIndex].end < block.timestamp, "Pot not expired yet");
       require(msg.sender == Pots[_potIndex].winner, "Unfortunately, you are not the winner of this Pot");
 
       uint256 amountToSend = Pots[_potIndex].potAmount;
