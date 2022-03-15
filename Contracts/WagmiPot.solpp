@@ -73,13 +73,15 @@ contract SunkCostGame {
     /// @param _buyInIncrementAmount Increment Amount for each buy in by Player
     /// @param _burnAmount Amount to be burned
     /// @param _extensionAmount Timer extension at every buy in
+    /// @param _tokenId Token that will be used for buying the pot
     /// @return Id of Pot Created
-    function createPot(uint256 _initialTimer, uint256 _maxTimerLimit, uint256 _buyInIncrementAmount, uint256 _burnAmount, uint256 _extensionAmount) public payable returns (uint256) {
+    function createPot(uint256 _initialTimer, uint256 _maxTimerLimit, uint256 _buyInIncrementAmount, uint256 _burnAmount, uint256 _extensionAmount, vitetoken _tokenId) public payable returns (uint256) {
       require(msg.value >= potCreationFee, "Amount sent is less than the fee required");
       require(_initialTimer >= _maxTimerLimit, "Initial timer must be more than equal to max timer limit");
-      //fix check for burn < incre amount
-      //fix check if token is burnable or not then only u can set the burn Property
-
+      require(_burnAmount < _buyInIncrementAmount, "Burn Amount Should be less than initial buy in amount");
+    
+      //FIX check if token is burnable or not then only u can set the burn Property
+      
       uint256 PotId = totalPotsCreated++;
       Pot storage pot = Pots[PotId];
       pot.maxTimerLimit = _maxTimerLimit;
@@ -90,7 +92,7 @@ contract SunkCostGame {
       pot.PotOwner = msg.sender;
       pot.winner = msg.sender;
       pot.potAmount = 0;
-      pot.tokenId = msg.token;
+      pot.tokenId = _tokenId;
       pot.start = block.timestamp;
       pot.end = _initialTimer + pot.start;
       pot.claimed = false;
@@ -99,10 +101,6 @@ contract SunkCostGame {
       return PotId;
     }
 
-    // function viewTime() view public returns (uint256) {
-    //   return block.timestamp;
-    // }
-
     /// @notice Buy any active Pot
     /// @param _potIndex Index or ID of Pot for buy in
     function buyPot(uint256 _potIndex) public payable potExists(_potIndex) {
@@ -110,20 +108,23 @@ contract SunkCostGame {
       require(msg.token == Pots[_potIndex].tokenId, "You can't buy this pot with this token");
       require(msg.value >= Pots[_potIndex].currentPrice, "Pot price is more than amount sent");
 
-      //fix logic if more amount is sent
+      //Fix logic if more amount is sent
 
-      //fix to not increase than maxlimit
-      if(Pots[_potIndex].end - block.timestamp <= Pots[_potIndex].maxTimerLimit) 
-        Pots[_potIndex].end += Pots[_potIndex].extensionAmount;
+      if(Pots[_potIndex].end - block.timestamp <= Pots[_potIndex].maxTimerLimit){
+          if(Pots[_potIndex].end + Pots[_potIndex].extensionAmount >= block.timestamp + Pots[_potIndex].maxTimerLimit)
+            Pots[_potIndex].end = block.timestamp + Pots[_potIndex].maxTimerLimit;
+          else
+            Pots[_potIndex].end += Pots[_potIndex].extensionAmount;
+      }
+
       Pots[_potIndex].currentPrice += Pots[_potIndex].buyInIncrementAmount;
     
-      //fix burn logic
-      TokenIssuance.Burn{value: (Pots[_potIndex].burnAmount * 1e18)}();
+      //Burn
+      TokenIssuance.Burn{value: (Pots[_potIndex].burnAmount * 1e18) , token : Pots[_potIndex].tokenId}();
 
       Pots[_potIndex].potAmount += msg.value;
       Pots[_potIndex].winner = msg.sender;
 
-      emit tokenInfo(msg.token);
       emit PotBought(msg.sender, _potIndex, Pots[_potIndex].currentPrice, Pots[_potIndex].end, block.timestamp);
     }
 
