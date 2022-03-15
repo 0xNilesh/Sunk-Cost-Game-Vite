@@ -4,6 +4,10 @@
 /// @dev Incentives for Protocol & Pot Creator
 pragma soliditypp ^0.8.0;
 
+/* NOTE 
+  Wherever there is payable function, we need to multiply (10^number of decimals) of token into amount
+/*
+
 /* INTERFACES */
 interface TokenIssuanceContract {
 
@@ -25,6 +29,8 @@ contract SunkCostGame {
     uint256 public potCreationFee;
     address public owner;
     uint256 public totalPotsCreated;
+    uint256 public totalFeeAccumulated;
+    vitetoken viteTokenId = "tti_5649544520544f4b454e6e40";
 
     struct Pot {
       address PotOwner;
@@ -57,6 +63,29 @@ contract SunkCostGame {
    }
    /* -------- */
 
+   /* PRIVATE Functions */
+    function setOwner(address _newOwnerAddress) public restricted {
+      owner = _newOwnerAddress;
+    }
+
+    function setFee(uint256 _fee) public restricted returns (uint256) {
+      potCreationFee = _fee;
+      return potCreationFee;
+    }
+
+    function claimFee() public restricted {
+      uint256 fee = totalFeeAccumulated;
+      totalFeeAccumulated = 0;
+      payable(owner).transfer(viteTokenId, fee*1e18);
+    }
+   /* ----------------- */
+
+   /* Getters */
+    function endTime(uint256 _potIndex) public view returns (uint256) {
+      return Pots[_potIndex].end;
+    }
+   /* ------- */
+
    //Fix -> Implementation for Protocol & Pot Creator Incentives
 
     /// @notice Initailize the contract with details of owner & Pot creation fee
@@ -65,6 +94,10 @@ contract SunkCostGame {
         potCreationFee = creationFee;
         owner = msg.sender;
         totalPotsCreated = 0;
+    }
+
+    function sendExtraAmountBack(vitetoken _tokenId, uint256 _amount, address _to) private {
+      payable(_to).transfer(_tokenId, _amount);
     }
 
     /// @notice Create a New Pot
@@ -76,6 +109,7 @@ contract SunkCostGame {
     /// @param _tokenId Token that will be used for buying the pot
     /// @return Id of Pot Created
     function createPot(uint256 _initialTimer, uint256 _maxTimerLimit, uint256 _buyInIncrementAmount, uint256 _burnAmount, uint256 _extensionAmount, vitetoken _tokenId) public payable returns (uint256) {
+      require(msg.token == viteTokenId, "Fee must be sent in VITE token");
       require(msg.value >= potCreationFee, "Amount sent is less than the fee required");
       require(_initialTimer >= _maxTimerLimit, "Initial timer must be more than equal to max timer limit");
       require(_burnAmount < _buyInIncrementAmount, "Burn Amount Should be less than initial buy in amount");
@@ -96,6 +130,10 @@ contract SunkCostGame {
       pot.start = block.timestamp;
       pot.end = _initialTimer + pot.start;
       pot.claimed = false;
+      totalFeeAccumulated = potCreationFee;
+
+      // send extra fee back to the user
+      sendExtraAmountBack(viteTokenId, msg.value-potCreationFee, msg.sender);
 
       emit PotCreated(msg.sender, PotId, block.timestamp);
       return PotId;
@@ -117,13 +155,16 @@ contract SunkCostGame {
             Pots[_potIndex].end += Pots[_potIndex].extensionAmount;
       }
 
+      Pots[_potIndex].potAmount += Pots[_potIndex].currentPrice;
+      Pots[_potIndex].winner = msg.sender;
+
+      // send extra fee back to the user
+      sendExtraAmountBack(Pots[_potIndex].tokenId, msg.value-Pots[_potIndex].currentPrice, msg.sender);
+
       Pots[_potIndex].currentPrice += Pots[_potIndex].buyInIncrementAmount;
     
       //Burn
       TokenIssuance.Burn{value: (Pots[_potIndex].burnAmount * 1e18) , token : Pots[_potIndex].tokenId}();
-
-      Pots[_potIndex].potAmount += msg.value;
-      Pots[_potIndex].winner = msg.sender;
 
       emit PotBought(msg.sender, _potIndex, Pots[_potIndex].currentPrice, Pots[_potIndex].end, block.timestamp);
     }
