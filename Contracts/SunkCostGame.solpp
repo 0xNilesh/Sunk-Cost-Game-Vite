@@ -76,7 +76,7 @@ contract SunkCostGame {
     function claimFee() public restricted {
       uint256 fee = totalFeeAccumulated;
       totalFeeAccumulated = 0;
-      payable(owner).transfer(viteTokenId, fee*1e18);
+      payable(owner).transfer(viteTokenId, fee);
     }
    /* ----------------- */
 
@@ -130,7 +130,7 @@ contract SunkCostGame {
       pot.start = block.timestamp;
       pot.end = _initialTimer + pot.start;
       pot.claimed = false;
-      totalFeeAccumulated = potCreationFee;
+      totalFeeAccumulated += potCreationFee;
 
       // send extra fee back to the user
       sendExtraAmountBack(viteTokenId, msg.value-potCreationFee, msg.sender);
