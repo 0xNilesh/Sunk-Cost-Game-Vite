@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0
 /// @title Grants Round 13 Hackathon Sunk Cost Game
 /// @author Aman & Nilesh
-
+/// @dev Incentives for Protocol & Pot Creator
 pragma soliditypp ^0.8.0;
 
 /* INTERFACES */
