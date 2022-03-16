@@ -37,6 +37,7 @@ contract SunkCostGame {
       uint256 maxTimerLimit;
       uint256 buyInIncrementAmount;
       uint256 burnAmount;
+      bool isOwnerBurnOnly;
       uint256 extensionAmount;
       address winner;
       uint256 potAmount;
@@ -111,6 +112,7 @@ contract SunkCostGame {
     /// @notice Get data for any token
     function GetTokenInformationCallback(bytes32 id, vitetoken tokenId, bool exist, bool isReIssuable, string calldata tokenName, string calldata tokenSymbol, uint totalSupply, uint8 decimals, uint maxSupply, bool isOwnerBurnOnly, uint16 index, address ownerAddress) external {
       // Process the data
+      Pots[totalPotsCreated-1].isOwnerBurnOnly = isOwnerBurnOnly;
     }
 
     /// @notice Send Extra Amount back to player
@@ -134,11 +136,16 @@ contract SunkCostGame {
       require(msg.value >= potCreationFee, "Amount sent is less than the fee required");
       require(_initialTimer >= _maxTimerLimit, "Initial timer must be more than equal to max timer limit");
       require(_burnAmount < _buyInIncrementAmount, "Burn Amount Should be less than initial buy in amount");
-    
-      //FIX check if token is burnable or not then only u can set the burn Property
       
       uint256 PotId = totalPotsCreated++;
       Pot storage pot = Pots[PotId];
+
+      invoke(_tokenId);
+      if(pot.isOwnerBurnOnly && _burnAmount > 0) {
+        totalPotsCreated--;
+        revert("Token can't be burned by Contract");
+      }
+
       pot.maxTimerLimit = _maxTimerLimit;
       pot.buyInIncrementAmount = _buyInIncrementAmount;
       pot.burnAmount = _burnAmount;
