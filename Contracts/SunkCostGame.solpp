@@ -1,24 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
-/// @title Grants Round 13 Hackathon Sunk Cost Game
-/// @author Aman & Nilesh
-/// @dev Incentives for Pot Creator & Token Info & Burn Functionality 
-
 pragma soliditypp ^0.8.0;
-struct Pot {
-      address PotOwner;
-      uint256 maxTimerLimit;
-      uint256 buyInIncrementAmount;
-      uint256 burnAmount;
-      bool isOwnerBurnOnly;
-      uint256 extensionAmount;
-      address winner;
-      uint256 potAmount;
-      uint256 currentPrice;
-      vitetoken tokenId;
-      uint256 start;
-      uint256 end;
-      bool claimed;
-    }
+
 /* INTERFACES */
 interface TokenIssuanceContract {
 
@@ -31,7 +13,6 @@ interface TokenIssuanceContract {
 /* ---------- */
 
 contract SunkCostGame {
-
     /* EVENTS */
     event tokenInfo(vitetoken tokenInfo);
     event PotCreated(address _from, uint256 _potIndex, uint256 time);
@@ -46,7 +27,23 @@ contract SunkCostGame {
     uint256 public totalFeeAccumulated;
     vitetoken viteTokenId = "tti_5649544520544f4b454e6e40";
 
+    struct Pot {
+      address PotOwner;
+      uint256 maxTimerLimit;
+      uint256 buyInIncrementAmount;
+      uint256 burnAmount;
+      bool isOwnerBurnOnly;
+      uint256 extensionAmount;
+      address winner;
+      uint256 potAmount;
+      uint256 currentPrice;
+      vitetoken tokenId;
+      uint256 start;
+      uint256 end;
+    }
+
     mapping(uint256 => Pot) public Pots;
+    mapping(uint256 => bool) claimed;
 
     TokenIssuanceContract TokenIssuance = TokenIssuanceContract("vite_000000000000000000000000000000000000000595292d996d");
     /* -------- */
@@ -101,13 +98,13 @@ contract SunkCostGame {
         totalPotsCreated = 0;
     }
 
-    // /// @notice Invoke/Call to get info of token
-    // /// @param _tokenId
+    /// @notice Invoke/Call to get info of token
+    /// @param _tokenId
     // function invoke(vitetoken _tokenId) external {
     //   TokenIssuance.GetTokenInformation(_tokenId);
     // }
 
-    // /// @notice Get data for any token
+    /// @notice Get data for any token
     // function GetTokenInformationCallback(bytes32 id, vitetoken tokenId, bool exist, bool isReIssuable, string calldata tokenName, string calldata tokenSymbol, uint totalSupply, uint8 decimals, uint maxSupply, bool isOwnerBurnOnly, uint16 index, address ownerAddress) external {
     //   // Process the data
     //   Pots[totalPotsCreated-1].isOwnerBurnOnly = isOwnerBurnOnly;
@@ -138,11 +135,11 @@ contract SunkCostGame {
       uint256 PotId = totalPotsCreated++;
       Pot storage pot = Pots[PotId];
 
-      // invoke(_tokenId);
-      // if(pot.isOwnerBurnOnly && _burnAmount > 0) {
-      //   totalPotsCreated--;
-      //   revert("Token can't be burned by Contract");
-      // }
+    //   invoke(_tokenId);
+    //   if(pot.isOwnerBurnOnly && _burnAmount > 0) {
+    //     totalPotsCreated--;
+    //     revert("Token can't be burned by Contract");
+    //   }
 
       pot.maxTimerLimit = _maxTimerLimit;
       pot.buyInIncrementAmount = _buyInIncrementAmount;
@@ -155,7 +152,6 @@ contract SunkCostGame {
       pot.tokenId = _tokenId;
       pot.start = block.timestamp;
       pot.end = _initialTimer + pot.start;
-      pot.claimed = false;
       totalFeeAccumulated += potCreationFee;
       
       sendExtraAmountBack(viteTokenId, msg.value-potCreationFee, msg.sender);
@@ -194,14 +190,14 @@ contract SunkCostGame {
     /// @notice Claim the Reward of the Pot
     /// @param _potIndex Index or ID of Pot whose reward is to be claimed
     function claimReward(uint256 _potIndex) public potExists(_potIndex) {
-      require(Pots[_potIndex].claimed != true, "Reward Already Claimed!");
+      require(claimed[_potIndex] != true, "Reward Already Claimed!");
       require(Pots[_potIndex].end < block.timestamp, "Pot not expired yet");
       require(msg.sender == Pots[_potIndex].winner, "Unfortunately, you are not the winner of this Pot");
 
       uint256 amountToSend = Pots[_potIndex].potAmount;
       Pots[_potIndex].potAmount = 0;
       payable(msg.sender).transfer(Pots[_potIndex].tokenId, amountToSend);
-      Pots[_potIndex].claimed = true;
+      claimed[_potIndex] = true;
 
       emit RewardClaimed(msg.sender, _potIndex);
     }
