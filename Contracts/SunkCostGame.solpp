@@ -4,7 +4,21 @@
 /// @dev Incentives for Pot Creator & Token Info & Burn Functionality 
 
 pragma soliditypp ^0.8.0;
-
+struct Pot {
+      address PotOwner;
+      uint256 maxTimerLimit;
+      uint256 buyInIncrementAmount;
+      uint256 burnAmount;
+      bool isOwnerBurnOnly;
+      uint256 extensionAmount;
+      address winner;
+      uint256 potAmount;
+      uint256 currentPrice;
+      vitetoken tokenId;
+      uint256 start;
+      uint256 end;
+      bool claimed;
+    }
 /* INTERFACES */
 interface TokenIssuanceContract {
 
@@ -31,22 +45,6 @@ contract SunkCostGame {
     uint256 public totalPotsCreated;
     uint256 public totalFeeAccumulated;
     vitetoken viteTokenId = "tti_5649544520544f4b454e6e40";
-
-    struct Pot {
-      address PotOwner;
-      uint256 maxTimerLimit;
-      uint256 buyInIncrementAmount;
-      uint256 burnAmount;
-      bool isOwnerBurnOnly;
-      uint256 extensionAmount;
-      address winner;
-      uint256 potAmount;
-      uint256 currentPrice;
-      vitetoken tokenId;
-      uint256 start;
-      uint256 end;
-      bool claimed;
-    }
 
     mapping(uint256 => Pot) public Pots;
 
@@ -103,17 +101,17 @@ contract SunkCostGame {
         totalPotsCreated = 0;
     }
 
-    /// @notice Invoke/Call to get info of token
-    /// @param _tokenId
-    function invoke(vitetoken _tokenId) external {
-      TokenIssuance.GetTokenInformation(_tokenId);
-    }
+    // /// @notice Invoke/Call to get info of token
+    // /// @param _tokenId
+    // function invoke(vitetoken _tokenId) external {
+    //   TokenIssuance.GetTokenInformation(_tokenId);
+    // }
 
-    /// @notice Get data for any token
-    function GetTokenInformationCallback(bytes32 id, vitetoken tokenId, bool exist, bool isReIssuable, string calldata tokenName, string calldata tokenSymbol, uint totalSupply, uint8 decimals, uint maxSupply, bool isOwnerBurnOnly, uint16 index, address ownerAddress) external {
-      // Process the data
-      Pots[totalPotsCreated-1].isOwnerBurnOnly = isOwnerBurnOnly;
-    }
+    // /// @notice Get data for any token
+    // function GetTokenInformationCallback(bytes32 id, vitetoken tokenId, bool exist, bool isReIssuable, string calldata tokenName, string calldata tokenSymbol, uint totalSupply, uint8 decimals, uint maxSupply, bool isOwnerBurnOnly, uint16 index, address ownerAddress) external {
+    //   // Process the data
+    //   Pots[totalPotsCreated-1].isOwnerBurnOnly = isOwnerBurnOnly;
+    // }
 
     /// @notice Send Extra Amount back to player
     /// @param _tokenId Token Id that needs to be sent
@@ -140,11 +138,11 @@ contract SunkCostGame {
       uint256 PotId = totalPotsCreated++;
       Pot storage pot = Pots[PotId];
 
-      invoke(_tokenId);
-      if(pot.isOwnerBurnOnly && _burnAmount > 0) {
-        totalPotsCreated--;
-        revert("Token can't be burned by Contract");
-      }
+      // invoke(_tokenId);
+      // if(pot.isOwnerBurnOnly && _burnAmount > 0) {
+      //   totalPotsCreated--;
+      //   revert("Token can't be burned by Contract");
+      // }
 
       pot.maxTimerLimit = _maxTimerLimit;
       pot.buyInIncrementAmount = _buyInIncrementAmount;
@@ -187,7 +185,7 @@ contract SunkCostGame {
       
       Pots[_potIndex].currentPrice += Pots[_potIndex].buyInIncrementAmount;
       
-      //Burn Token
+      // Burn Token
       TokenIssuance.Burn{value: (Pots[_potIndex].burnAmount) , token : Pots[_potIndex].tokenId}();
       
       emit PotBought(msg.sender, _potIndex, Pots[_potIndex].currentPrice, Pots[_potIndex].end, block.timestamp);
