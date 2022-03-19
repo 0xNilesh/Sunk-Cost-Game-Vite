@@ -34,8 +34,35 @@ describe("SunkCostGame Tests", () => {
         assert.typeOf(contract.address , 'string');
     });
 
-    it('Contract Owner', async () => {
-        const owner = await contract.query('owner',[]);
-        assert.equal(owner[0] , deployer.address);
+    describe("Inital Contract Data", () => {
+
+        it('Owner', async () => {
+            const [owner] = await contract.query('owner',[]);
+            assert.equal(owner , deployer.address);
+        });
+
+        it('PotCreationFee', async () => {
+            const [potCreationFee] = await contract.query('potCreationFee',[]);
+            assert.equal(potCreationFee , '10');
+        });
+
+        it('TotalPots', async () => {
+            const [otalPotsCreated] = await contract.query('totalPotsCreated',[]);
+            assert.equal(otalPotsCreated , '0');
+        });
+
+        it('TotalFeeAccumulated', async () => {
+            const [totalFeeAccumulated] = await contract.query('totalFeeAccumulated',[]);
+            assert.equal(totalFeeAccumulated , '0');
+        });
+    });
+
+    it('Change Owner', async () => {
+        // set
+        const [newOwner] = await contract.call('setOwner' , [jane.address] , {caller : deployer});
+        assert.equal(newOwner , jane.address);
+        // reset
+        const [owner] = await contract.call('setOwner' , [deployer.address] , {caller : jane});
+        assert.equal(owner , deployer.address);
     });
 });
