@@ -82,12 +82,6 @@ contract SunkCostGame {
     }
    /* ----------------- */
 
-   /* GETTERS */
-    function endTime(uint256 _potIndex) public view returns (uint256) {
-      return Pots[_potIndex].end;
-    }
-   /* ------- */
-
     /// @notice Initailize the contract with details of owner & Pot creation fee
     /// @param _creationFee Initial buy in or Fee to create a Pot
     constructor (uint256 _creationFee) {
