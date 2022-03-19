@@ -8,13 +8,12 @@ interface TokenIssuanceContract {
     function Burn() external payable; 
 
     /// @notice Get All Info related to a token
-    function GetTokenInformation(vitetoken _tokenId) external; 
+    // function GetTokenInformation(vitetoken _tokenId) external; 
 }
 /* ---------- */
 
 contract SunkCostGame {
     /* EVENTS */
-    event tokenInfo(vitetoken tokenInfo);
     event PotCreated(address _from, uint256 _potIndex, uint256 time);
     event RewardClaimed(address _from, uint256 _potIndex);
     event PotBought(address _from, uint256 _potIndex, uint256 potCurrentPrice, uint256 potEndTime, uint256 time);
@@ -32,7 +31,6 @@ contract SunkCostGame {
       uint256 maxTimerLimit;
       uint256 buyInIncrementAmount;
       uint256 burnAmount;
-      bool isOwnerBurnOnly;
       uint256 extensionAmount;
       address winner;
       uint256 potAmount;
@@ -40,10 +38,10 @@ contract SunkCostGame {
       vitetoken tokenId;
       uint256 start;
       uint256 end;
+      bool claimed;
     }
 
     mapping(uint256 => Pot) public Pots;
-    mapping(uint256 => bool) claimed;
 
     TokenIssuanceContract TokenIssuance = TokenIssuanceContract("vite_000000000000000000000000000000000000000595292d996d");
     /* -------- */
@@ -152,6 +150,7 @@ contract SunkCostGame {
       pot.tokenId = _tokenId;
       pot.start = block.timestamp;
       pot.end = _initialTimer + pot.start;
+      pot.claimed = false;
       totalFeeAccumulated += potCreationFee;
       
       sendExtraAmountBack(viteTokenId, msg.value-potCreationFee, msg.sender);
@@ -190,14 +189,14 @@ contract SunkCostGame {
     /// @notice Claim the Reward of the Pot
     /// @param _potIndex Index or ID of Pot whose reward is to be claimed
     function claimReward(uint256 _potIndex) public potExists(_potIndex) {
-      require(claimed[_potIndex] != true, "Reward Already Claimed!");
+      require(Pots[_potIndex].claimed != true, "Reward Already Claimed!");
       require(Pots[_potIndex].end < block.timestamp, "Pot not expired yet");
       require(msg.sender == Pots[_potIndex].winner, "Unfortunately, you are not the winner of this Pot");
 
       uint256 amountToSend = Pots[_potIndex].potAmount;
       Pots[_potIndex].potAmount = 0;
+      Pots[_potIndex].claimed = true;
       payable(msg.sender).transfer(Pots[_potIndex].tokenId, amountToSend);
-      claimed[_potIndex] = true;
 
       emit RewardClaimed(msg.sender, _potIndex);
     }
