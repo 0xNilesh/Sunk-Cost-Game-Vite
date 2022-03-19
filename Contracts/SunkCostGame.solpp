@@ -117,8 +117,7 @@ contract SunkCostGame {
     /// @param _burnAmount Amount to be burned
     /// @param _extensionAmount Timer extension at every buy in
     /// @param _tokenId Token that will be used for buying the pot
-    /// @return Id of Pot Created
-    function createPot(uint256 _initialTimer, uint256 _maxTimerLimit, uint256 _buyInIncrementAmount, uint256 _burnAmount, uint256 _extensionAmount, vitetoken _tokenId) public payable returns (uint256) {
+    function createPot(uint256 _initialTimer, uint256 _maxTimerLimit, uint256 _buyInIncrementAmount, uint256 _burnAmount, uint256 _extensionAmount, vitetoken _tokenId) public payable {
       require(msg.token == viteTokenId, "Fee must be sent in VITE token");
       require(msg.value >= potCreationFee, "Amount sent is less than the fee required");
       require(_initialTimer >= _maxTimerLimit, "Initial timer must be more than equal to max timer limit");
@@ -150,7 +149,6 @@ contract SunkCostGame {
       sendExtraAmountBack(viteTokenId, msg.value-potCreationFee, msg.sender);
       
       emit PotCreated(msg.sender, PotId, block.timestamp);
-      return PotId;
     }
 
     /// @notice Buy any active Pot
