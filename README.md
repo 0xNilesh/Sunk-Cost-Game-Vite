@@ -13,9 +13,9 @@
   <p align="center">
     <a href="https://gitcoin.co/issue/vitelabs/bounties/25/100028535">Vite Hackathon</a>
     ·
-    <a href="https://github.com/nilesh46/Sunk-Cost-Game/issues">Report Bug</a>
+    <a href="https://github.com/nilesh46/Sunk-Cost-Game-Vite/issues">Report Bug</a>
     ·
-    <a href="https://github.com/nilesh46/Sunk-Cost-Game/issues">Request Feature</a>
+    <a href="https://github.com/nilesh46/Sunk-Cost-Game-Vite/issues">Request Feature</a>
   </p>
 </p>
 
@@ -29,7 +29,7 @@
         <li><a href="#built-with">Built With</a></li>
       </ul>
     </li>
-    <li><a href="#game-structure">Game Structure</a></li>
+    <li><a href="#structure">Structure</a></li>
     <li>
         <a href="#installation">Installation</a>
         <ul>
@@ -81,7 +81,7 @@ The contract consists of mainly 3 restricted owner functions
 <li> claimReward - To claim the reward of a Pot by the winner</li>
 </p>
 
-###### Pot Structure
+##### Pot Structure
 ```
 struct Pot {
       address PotOwner; //Pot Creator address
