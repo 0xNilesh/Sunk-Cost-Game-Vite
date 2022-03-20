@@ -14,9 +14,9 @@ interface TokenIssuanceContract {
 
 contract SunkCostGame {
     /* EVENTS */
-    event PotCreated(address _from, uint256 _potIndex, uint256 time);
+    event PotCreated(address _from, uint256 _potIndex, uint256 _time);
     event RewardClaimed(address _from, uint256 _potIndex);
-    event PotBought(address _from, uint256 _potIndex, uint256 potCurrentPrice, uint256 potEndTime, uint256 time);
+    event PotBought(address _from, uint256 _potIndex, uint256 _potCurrentPrice, uint256 _potEndTime, uint256 _time);
     /* ------ */
 
     /* VARIABLES */
@@ -165,7 +165,7 @@ contract SunkCostGame {
             Pots[_potIndex].end += Pots[_potIndex].extensionAmount;
       }
       
-      Pots[_potIndex].potAmount += Pots[_potIndex].currentPrice;
+      Pots[_potIndex].potAmount += Pots[_potIndex].currentPrice - Pots[_potIndex].burnAmount;
       Pots[_potIndex].winner = msg.sender;
       
       sendExtraAmountBack(Pots[_potIndex].tokenId, msg.value-Pots[_potIndex].currentPrice, msg.sender);

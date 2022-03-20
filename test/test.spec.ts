@@ -58,7 +58,7 @@ describe("SunkCostGame Tests", () => {
         });
     });
 
-    describe("Owner Restrictied Functions", () => {
+    describe("Owner Restricted Functions", () => {
 
         it('SetOwner Restriction Check' , async () => {
             await expect(contract.call('setOwner' , [jane.address] , {caller : john})).to.eventually.be.rejectedWith('revert');
@@ -105,7 +105,7 @@ describe("SunkCostGame Tests", () => {
         
         // Dont Know
         // it('Fail on Amount Paid in Another Token than Vite' , async () => {
-        //     await expect(contract.call('createPot' , ['300000' , '200000' , '10' , '5' , '20000' , 'tti_5649544520544f4b454e6e40'] , {caller : john , amount : '10' , token: 'tti_564954455820434f494e69b5'})).to.eventually.be.rejectedWith('revert');
+        //     await expect(contract.call('createPot', ['300000', '200000', '10', '5', '20000', 'tti_5649544520544f4b454e6e40'], { caller: john, amount: '10', token: 'tti_564954455820434f494e69b5' })).to.eventually.be.rejectedWith('revert');
         // });
 
         it('Fail on Amount < PotCreation Fee' , async () => {
@@ -155,5 +155,73 @@ describe("SunkCostGame Tests", () => {
             expect(final_balance).to.be.deep.equal('29990'); //30000 - 10
         });
 
+    });
+
+    describe("Buy the Pot", () => {
+        it("Pot doesn't exist", async () => {
+            await expect(contract.call('buyPot', [10], {caller: jane, amount: '20'})).to.eventually.be.rejectedWith('revert');
+        });
+
+        it("Buy Pot Successfully", async () => {
+            await contract.call('createPot', ['1000', '2', '10', '3', '2', 'tti_5649544520544f4b454e6e40'], { caller: john, amount: '100' });
+            await contract.call('buyPot', [2], { caller: jane, amount: '20' });
+
+            const events = await contract.getPastEvents('allEvents', { fromHeight: 0, toHeight: 50 });
+            expect(events[3].returnValues._from).to.be.deep.equal(jane.address);
+            expect(events[3].returnValues._potIndex).to.be.deep.equal('2');
+            expect(events[3].returnValues._potCurrentPrice).to.be.deep.equal('20');
+        });
+
+        it("Last winner changed", async () => {
+            const potData = await contract.query('Pots', ['2']);
+            assert.equal(potData[5], jane.address);
+        });
+
+        it("Timer Not Extended", async () => {
+            const potData = await contract.query('Pots', ['2']);
+            // Timer should not be changed
+            assert.equal(potData[10]-potData[9], 1000);
+        })
+
+        it("Pot Amount", async () => {
+            const potData = await contract.query('Pots', ['2']);
+            // pot amount = current price - burn amount (10-3 = 7)
+            assert.equal(potData[6], 7);
+        });
+
+        it("Current Price Changed", async () => {
+            const potData = await contract.query('Pots', ['2']);
+            // current price = (number of buys + 1) * buyInIncrementAmount
+            assert.equal(potData[7], 20);
+        });
+    });
+
+    describe("Claim Reward", () => {
+        it("Fail to claim Reward of non-existent Pot", async () => {
+            await expect(contract.call('claimReward', [10], { caller: jane })).to.eventually.be.rejectedWith('revert');
+        });
+
+        it("Fail to claim Reward of not expired Pot", async () => {
+            await expect(contract.call('claimReward', [10], { caller: john })).to.eventually.be.rejectedWith('revert');
+        });
+
+        it("Fail when non-winner tries to claim", async () => {
+            await contract.call('createPot', ['2', '1', '10', '3', '2', 'tti_5649544520544f4b454e6e40'], { caller: john, amount: '100' });
+            await expect(contract.call('claimReward', [10], { caller: jane })).to.eventually.be.rejectedWith('revert');
+        });
+
+        it("Successfully claim reward", async () => {
+            await expect(contract.call('claimReward', [3], { caller: john }));
+
+            const events = await contract.getPastEvents('allEvents', { fromHeight: 0, toHeight: 50 });
+            expect(events[4].returnValues._from).to.be.deep.equal(john.address);
+            expect(events[4].returnValues._potIndex).to.be.deep.equal('3');
+        });
+
+        it("Fail to claim Reward of already claimed Pot", async () => {
+            // const potData = await contract.query('Pots', ['3']);
+            // console.log(potData);
+            await expect(contract.call('claimReward', [3], { caller: john })).to.eventually.be.rejectedWith('revert');
+        });
     });
 });
