@@ -17,6 +17,7 @@ contract SunkCostGame {
     event PotCreated(address _from, uint256 _potIndex, uint256 _time);
     event RewardClaimed(address _from, uint256 _potIndex);
     event PotBought(address _from, uint256 _potIndex, uint256 _potCurrentPrice, uint256 _potEndTime, uint256 _time);
+    event CreationFeeUpdated(uint256 _newCreationFee);
     /* ------ */
 
     /* VARIABLES */
@@ -71,6 +72,7 @@ contract SunkCostGame {
     /// @notice Set New Pot Creation Fee
     function setFee(uint256 _fee) public restricted returns (uint256) {
       potCreationFee = _fee;
+      emit CreationFeeUpdated(potCreationFee);
       return potCreationFee;
     }
 
@@ -81,6 +83,25 @@ contract SunkCostGame {
       payable(owner).transfer(viteTokenId, fee);
     }
    /* ----------------- */
+
+    /* GETTERS */
+    function currentWinner(uint256 _potIndex) public view returns (address) {
+      return Pots[_potIndex].winner;
+    }
+
+    function currentPriceOfPot(uint256 _potIndex) public view returns (uint256) {
+      return Pots[_potIndex].currentPrice;
+    }
+
+    function currentPotAmount(uint256 _potIndex) public view returns (uint256) {
+      return Pots[_potIndex].potAmount;
+    }
+
+    function isPotClaimed(uint256 _potIndex) public view returns (bool) {
+      return Pots[_potIndex].claimed;
+    }
+
+    /* -------- */
 
     /// @notice Initailize the contract with details of owner & Pot creation fee
     /// @param _creationFee Initial buy in or Fee to create a Pot

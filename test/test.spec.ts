@@ -48,8 +48,8 @@ describe("SunkCostGame Tests", () => {
         });
 
         it('TotalPots', async () => {
-            const [otalPotsCreated] = await contract.query('totalPotsCreated',[]);
-            assert.equal(otalPotsCreated , '0');
+            const [totalPotsCreated] = await contract.query('totalPotsCreated',[]);
+            assert.equal(totalPotsCreated , '0');
         });
 
         it('TotalFeeAccumulated', async () => {
@@ -83,11 +83,17 @@ describe("SunkCostGame Tests", () => {
             // set
             await contract.call('setFee' , ['30'] , {caller : deployer});
             const [newPotCreationFee] = await contract.query('potCreationFee',[]);
-            assert.equal(newPotCreationFee , '30');
+            assert.equal(newPotCreationFee, '30');
+            
+            const events = await contract.getPastEvents('allEvents', {fromHeight: 0, toHeight: 50});
+            expect(events[0].returnValues._newCreationFee).to.be.deep.equal('30');
             // reset
             await contract.call('setFee' , ['10'] , {caller : deployer});
             const [potCreationFee] = await contract.query('potCreationFee',[]);
-            assert.equal(potCreationFee , '10');
+            assert.equal(potCreationFee, '10');
+            
+            const updatedEvents = await contract.getPastEvents('allEvents', {fromHeight: 0, toHeight: 50});
+            expect(updatedEvents[1].returnValues._newCreationFee).to.be.deep.equal('10');
         });
 
         it('ClaimFee Restriction Check' , async () => {
@@ -124,8 +130,8 @@ describe("SunkCostGame Tests", () => {
             await contract.call('createPot' , ['300000' , '200000' , '10' , '5' , '20000' , 'tti_5649544520544f4b454e6e40'] , {caller : john , amount : '10'});
             //check event
             const events = await contract.getPastEvents('allEvents', {fromHeight: 0, toHeight: 50});
-            expect(events[0].returnValues._from).to.be.deep.equal(john.address);
-            expect(events[0].returnValues._potIndex).to.be.deep.equal('0');
+            expect(events[2].returnValues._from).to.be.deep.equal(john.address);
+            expect(events[2].returnValues._potIndex).to.be.deep.equal('0');
         });
         
         it('Pot Data' , async () => {
@@ -163,13 +169,13 @@ describe("SunkCostGame Tests", () => {
         });
 
         it("Buy Pot Successfully", async () => {
-            await contract.call('createPot', ['1000', '2', '10', '3', '2', 'tti_5649544520544f4b454e6e40'], { caller: john, amount: '100' });
+            await contract.call('createPot', ['10000', '2', '10', '3', '2', 'tti_5649544520544f4b454e6e40'], { caller: john, amount: '100' });
             await contract.call('buyPot', [2], { caller: jane, amount: '20' });
 
             const events = await contract.getPastEvents('allEvents', { fromHeight: 0, toHeight: 50 });
-            expect(events[3].returnValues._from).to.be.deep.equal(jane.address);
-            expect(events[3].returnValues._potIndex).to.be.deep.equal('2');
-            expect(events[3].returnValues._potCurrentPrice).to.be.deep.equal('20');
+            expect(events[5].returnValues._from).to.be.deep.equal(jane.address);
+            expect(events[5].returnValues._potIndex).to.be.deep.equal('2');
+            expect(events[5].returnValues._potCurrentPrice).to.be.deep.equal('20');
         });
 
         it("Last winner changed", async () => {
@@ -180,7 +186,7 @@ describe("SunkCostGame Tests", () => {
         it("Timer Not Extended", async () => {
             const potData = await contract.query('Pots', ['2']);
             // Timer should not be changed
-            assert.equal(potData[10]-potData[9], 1000);
+            assert.equal(potData[10]-potData[9], 10000);
         })
 
         it("Pot Amount", async () => {
@@ -194,6 +200,18 @@ describe("SunkCostGame Tests", () => {
             // current price = (number of buys + 1) * buyInIncrementAmount
             assert.equal(potData[7], 20);
         });
+
+        it("Balance of Buyer decreased", async () => {
+            await john.receiveAll();
+            const balanceJohn = await john.balance();
+            console.log(balanceJohn);
+            await contract.call('buyPot', [2], { caller: john, amount: '100' });
+            await john.receiveAll();
+            const finalBalance = await john.balance();
+            console.log(finalBalance);
+            // initially price of pot was 20
+            assert.equal(balanceJohn - 20, finalBalance);
+        })
     });
 
     describe("Claim Reward", () => {
@@ -214,14 +232,19 @@ describe("SunkCostGame Tests", () => {
             await expect(contract.call('claimReward', [3], { caller: john }));
 
             const events = await contract.getPastEvents('allEvents', { fromHeight: 0, toHeight: 50 });
-            expect(events[4].returnValues._from).to.be.deep.equal(john.address);
-            expect(events[4].returnValues._potIndex).to.be.deep.equal('3');
+            expect(events[7].returnValues._from).to.be.deep.equal(john.address);
+            expect(events[7].returnValues._potIndex).to.be.deep.equal('3');
+        });
+
+        it("Reward of Claimed Reward must be zero", async () => {
+            const potData = await contract.query('Pots', ['3']);
+            assert.equal(potData[6], '0');
         });
 
         it("Fail to claim Reward of already claimed Pot", async () => {
-            // const potData = await contract.query('Pots', ['3']);
-            // console.log(potData);
             await expect(contract.call('claimReward', [3], { caller: john })).to.eventually.be.rejectedWith('revert');
+            const [claimed] = await contract.query('isPotClaimed', [3]);
+            assert.equal(claimed, '1');
         });
     });
 });
