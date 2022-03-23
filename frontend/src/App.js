@@ -1,4 +1,4 @@
-import React , {useEffect} from 'react';
+import React , {useEffect , useState} from 'react';
 import {Routes,Route,Navigate} from 'react-router-dom';
 import Home from './pages/home';
 import Profile from './pages/profile';
@@ -11,6 +11,22 @@ import { ViteAPI, accountBlock } from "@vite/vitejs";
 import sunkCostGame from "./contract/sunkCostGame_abi.json";
 import sunkCostGameContract from "./contract/sunkCostGame_contract.json";
 const { HTTP_RPC } = require("@vite/vitejs-http");
+
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { light, dark } from './config/themization';
+
+const useDarkMode = () => {
+	const [theme, setTheme] = useState(dark);
+
+    const toggleTheme = () => {
+      const updatedTheme = (theme === dark) ? light : dark;
+		  setTheme(updatedTheme);
+	};
+	return [theme, toggleTheme];
+};
+
+
+
 
 let provider;
 let contract;
@@ -77,9 +93,12 @@ const App = () => {
     await login();
   },[]);
 
+  const [theme, toggleTheme] = useDarkMode();
+	const themeConfig = createTheme(theme);
+
   return(
-    <div>
-      <Header/>
+    <ThemeProvider theme={themeConfig}>
+      <Header toggleTheme={toggleTheme} />
         <Routes>
             <Route path='/' element={<Home/>}/>
             <Route path='/profile' element={<Profile/>}/>
@@ -87,8 +106,8 @@ const App = () => {
             <Route path='/pots/:num' element={<EachPot/>}/>
             <Route path="*" element={<Navigate replace to="/"/>} />
         </Routes>
-    </div>
+    </ThemeProvider>
   )
 }
-export default App;
 
+export default App;
