@@ -5,15 +5,15 @@ import Profile from './pages/profile';
 import Pots from './pages/pots';
 import EachPot from './pages/eachPot';
 import Header from './components/Header';
-import Connector from "@vite/connector";
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { light, dark } from './config/themization';
+import QRCode from "qrcode.react";
 
-import { ViteAPI, accountBlock } from "@vite/vitejs";
+import Connector from "@vite/connector";
+import { ViteAPI} from "@vite/vitejs";
 import sunkCostGame from "./contract/sunkCostGame_abi.json";
 import sunkCostGameContract from "./contract/sunkCostGame_contract.json";
 const { HTTP_RPC } = require("@vite/vitejs-http");
-
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { light, dark } from './config/themization';
 
 const useDarkMode = () => {
 	const [theme, setTheme] = useState(dark);
@@ -26,13 +26,11 @@ const useDarkMode = () => {
 };
 
 
-
-
 let provider;
 let contract;
 let beneficiaryAddress;
 let vc;
-const user = {};
+// const user = {};
 
 const TryConnect = ()=>{
   provider = new ViteAPI(
@@ -51,35 +49,9 @@ const TryConnect = ()=>{
   console.log("app created");
 }
 
-const login = async () => {
-  vc = new Connector({ bridge: sunkCostGameContract.bridgeWS });
-  await vc.createSession();
-  const uri = vc.uri;
 
-  console.log("uri", uri);
 
-  user.uri = uri;
-  console.log(user);
-  // this.setState({ user: this.user });
-
-  vc.on("connect", (err: any, payload: any) => {
-    // vcInstance can start prompting transactions on the user's Vite wallet app
-    console.log("WalletConnector.connect", err, payload, vc.session);
-
-    // user.login(vc.session);
-    // console.log(user);
-    // this.setState({ user: this.user });
-  });
-
-  vc.on("disconnect", (err: any, payload: any) => {
-    console.log("WalletConnector.disconnect", err, payload);
-    // User's Vite wallet app is no longer connected
-    // this.user.logout();
-    // this.setState({ user: this.user });
-
-    vc.stopBizHeartBeat();
-  });
-};
+ 
 
 const logout = async () => {
   await vc.killSession();
@@ -93,12 +65,45 @@ const App = () => {
     await login();
   },[]);
 
+  const [user , setUser] = useState({});
+  const login = async () => {
+    vc = new Connector({ bridge: sunkCostGameContract.bridgeWS });
+    await vc.createSession();
+    const uri = vc.uri;
+  
+    console.log("uri", uri);
+  
+    setUser({uri : uri});
+    // user.uri = uri;
+    // console.log(user);
+    // this.setState({ user: this.user });
+  
+    vc.on("connect", (err: any, payload: any) => {
+      // vcInstance can start prompting transactions on the user's Vite wallet app
+      console.log("WalletConnector.connect", err, payload, vc.session);
+  
+      // user.login(vc.session);
+      // console.log(user);
+      // this.setState({ user: this.user });
+      
+    });
+    vc.on("disconnect", (err: any, payload: any) => {
+      console.log("WalletConnector.disconnect", err, payload);
+      // User's Vite wallet app is no longer connected
+      // this.user.logout();
+      // this.setState({ user: this.user });
+  
+      vc.stopBizHeartBeat();
+    });
+  };
+
   const [theme, toggleTheme] = useDarkMode();
 	const themeConfig = createTheme(theme);
 
   return(
     <ThemeProvider theme={themeConfig}>
       <Header toggleTheme={toggleTheme} />
+      <h1> {user.uri && <QRCode value={user.uri} />}</h1>
         <Routes>
             <Route path='/' element={<Home/>}/>
             <Route path='/profile' element={<Profile/>}/>
