@@ -1,3 +1,26 @@
 import React from 'react';
-const Header = () => (<div></div>);
+import { AppBar, IconButton, Typography } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
+
+const Header = ({ toggleTheme }) => {
+  let theme = useTheme();
+  console.log(theme);
+
+  return (
+    <div>
+      <AppBar position="static">  
+        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          Home
+        </Typography>
+        <IconButton sx={{ ml: 1 }} onClick={toggleTheme} color="inherit">
+          {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+          {console.log(theme.palette.mode)}
+        </IconButton>        
+      </AppBar>
+    </div>
+  );
+}
+
 export default Header;
