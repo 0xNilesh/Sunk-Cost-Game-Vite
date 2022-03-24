@@ -1,27 +1,26 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  address : ""
+  address : "",
+  uri : ""
 }
 
 export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
+    setUri: (state,action) => {
+      state.uri = action.payload
+    },
     login: (state,action) => {
-      // Redux Toolkit allows us to write "mutating" logic in reducers. It
-      // doesn't actually mutate the state because it uses the Immer library,
-      // which detects changes to a "draft state" and produces a brand new
-      // immutable state based off those changes
       state.address = action.payload
     },
     logout: (state) => {
-      state.address = ""
+      state.address = "";
+      state.uri = "";
     },
   },
 })
 
-// Action creators are generated for each case reducer function
-export const { login , logout } = userSlice.actions
-
-export default userSlice.reducer
+export const { login , logout , setUri } = userSlice.actions;
+export default userSlice.reducer;

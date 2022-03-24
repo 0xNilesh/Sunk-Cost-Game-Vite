@@ -6,7 +6,6 @@ import Brightness7Icon from '@mui/icons-material/Brightness7';
 
 const Header = ({ toggleTheme }) => {
   let theme = useTheme();
-  console.log(theme);
 
   return (
     <div>
