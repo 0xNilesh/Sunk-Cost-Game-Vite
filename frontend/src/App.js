@@ -8,7 +8,7 @@ import Header from './components/Header';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { light, dark } from './config/themization';
 import QRCode from "qrcode.react";
-import {TryConnect , Login , Logout} from './redux/action';
+import {TryConnect , Login , Logout , ContractOwner} from './redux/action.tsx';
 import { useSelector , useDispatch } from 'react-redux';
 
 const useDarkMode = () => {
@@ -33,15 +33,11 @@ const App = () => {
   const [theme, toggleTheme] = useDarkMode();
 	const themeConfig = createTheme(theme);
 
-  useEffect(async() => {
-    
-  },[]);
-
-
   return(
     <ThemeProvider theme={themeConfig}>
       <Header toggleTheme={toggleTheme} />
       <h1 style={{padding : "10px"}}> {user.uri && <QRCode value={user.uri} />}</h1>
+      <button onClick={async()=>await ContractOwner(user)}></button>
         <Routes>
             <Route path='/' element={<Home/>}/>
             <Route path='/profile' element={<Profile/>}/>
