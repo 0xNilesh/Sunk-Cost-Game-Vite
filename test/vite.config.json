@@ -1,8 +1,8 @@
 {
     "networks": {
-      "local": {
-        "http": "https://buidl.vite.net/gvite",
-        "mnemonic": "bright arrest jazz use slot almost lady couple fog edge release soft visit sense advance media river plunge wheel ill amazing cattle daring picnic"
-      }
+        "local": {
+            "http": "https://buidl.vite.net/gvite",
+            "mnemonic": "bright arrest jazz use slot almost lady couple fog edge release soft visit sense advance media river plunge wheel ill amazing cattle daring picnic"
+        }
     }
-  }
+}
