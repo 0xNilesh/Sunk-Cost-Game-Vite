@@ -2,9 +2,9 @@ const { expect } = require("chai");
 const vuilder = require("@vite/vuilder");
 import config from "./deploy.config.json";
 
-const deploy = async (_creationFee) => {
+const deploy = async (_creationFee: any) => {
 	const provider = vuilder.newProvider(config.http);
-	console.log(await provider.request("ledger_getSnapshotChainHeight"));
+	// await provider.request("ledger_getSnapshotChainHeight");
 	const deployer = vuilder.newAccount(config.mnemonic, 0, provider);
 
 	// compile

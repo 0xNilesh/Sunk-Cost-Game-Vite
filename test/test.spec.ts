@@ -16,22 +16,24 @@ describe("SunkCostGame Tests", () => {
     before(async () => {
         provider = vuilder.newProvider(config.networks.local.http);
         deployer = vuilder.newAccount(config.networks.local.mnemonic, 0, provider);
-        john = vuilder.newAccount(config.networks.local.mnemonic, mnemonicCounter++);
-        jane = vuilder.newAccount(config.networks.local.mnemonic, mnemonicCounter++);
-        await deployer.sendToken(john.address, '30000');
-        await john.receiveAll();
-        await deployer.sendToken(jane.address, '30000');
-        await jane.receiveAll();
+        // john = vuilder.newAccount(config.networks.local.mnemonic, mnemonicCounter++);
+        // jane = vuilder.newAccount(config.networks.local.mnemonic, mnemonicCounter++);
+        // await deployer.sendToken(john.address, '30000');
+        // await john.receiveAll();
+        // await deployer.sendToken(jane.address, '30000');
+        // await jane.receiveAll();
       });
 
     it('Contract Deployment', async () => {
         // compile
         const compiledContracts = await vuilder.compile("SunkCostGame.solpp");
+        // console.log(JSON.stringify(compiledContracts.TokenIssuanceContract.abi));
         expect(compiledContracts).to.have.property("SunkCostGame");
         // deploy
         contract = compiledContracts.SunkCostGame;
         contract.setDeployer(deployer).setProvider(provider);
-        await contract.deploy({params: [10], responseLatency: 1});
+        await contract.deploy({ params: [10], responseLatency: 1 });
+        console.log(contract.address);
         assert.typeOf(contract.address , 'string');
     });
 

@@ -10,12 +10,11 @@ const Header = ({ toggleTheme }) => {
   return (
     <div>
       <AppBar position="static">  
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+        <Typography variant="h6" component="div">
           Home
         </Typography>
         <IconButton sx={{ ml: 1 }} onClick={toggleTheme} color="inherit">
           {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
-          {console.log(theme.palette.mode)}
         </IconButton>        
       </AppBar>
     </div>
