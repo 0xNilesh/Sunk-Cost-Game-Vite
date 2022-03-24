@@ -8,8 +8,8 @@ import Header from "./components/Header";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { light, dark } from "./config/themization";
 import QRCode from "qrcode.react";
-import {TryConnect , Login , Logout , ContractOwner} from './redux/action.tsx';
-import { useSelector , useDispatch } from 'react-redux';
+import { TryConnect, Login, Logout, ContractOwner } from "./redux/action.tsx";
+import { useSelector, useDispatch } from "react-redux";
 
 const useDarkMode = () => {
     const [theme, setTheme] = useState(dark);
@@ -22,31 +22,33 @@ const useDarkMode = () => {
 };
 
 const App = () => {
-  const dispatch = useDispatch();
-  useEffect(async() => {
-    TryConnect();
-    await dispatch(Login());
-  },[]);
+    const dispatch = useDispatch();
+    useEffect(async () => {
+        TryConnect();
+        await dispatch(Login());
+    }, []);
 
+    const user = useSelector((state) => state.user);
+    const [theme, toggleTheme] = useDarkMode();
+    const themeConfig = createTheme(theme);
 
-  const user = useSelector((state) => state.user);
-  const [theme, toggleTheme] = useDarkMode();
-	const themeConfig = createTheme(theme);
-
-  return(
-    <ThemeProvider theme={themeConfig}>
-      <Header toggleTheme={toggleTheme} />
-      <h1 style={{padding : "10px"}}> {user.uri && <QRCode value={user.uri} />}</h1>
-      <button onClick={async()=>await ContractOwner(user)}></button>
-        <Routes>
-            <Route path='/' element={<Home/>}/>
-            <Route path='/profile' element={<Profile/>}/>
-            <Route path='/pots' element={<Pots/>}/>
-            <Route path='/pots/:num' element={<EachPot/>}/>
-            <Route path="*" element={<Navigate replace to="/"/>} />
-        </Routes>
-    </ThemeProvider>
-  )
-}
+    return (
+        <ThemeProvider theme={themeConfig}>
+            <Header toggleTheme={toggleTheme} />
+            <h1 style={{ padding: "10px" }}>
+                {" "}
+                {user.uri && <QRCode value={user.uri} />}
+            </h1>
+            <button onClick={async () => await ContractOwner(user)}></button>
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/pots" element={<Pots />} />
+                <Route path="/pots/:num" element={<EachPot />} />
+                <Route path="*" element={<Navigate replace to="/" />} />
+            </Routes>
+        </ThemeProvider>
+    );
+};
 
 export default App;
