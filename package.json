@@ -19,6 +19,7 @@
     "typescript": "^4.6.2"
   },
   "scripts": {
+    "format": "prettier --write \"*/*.{js,jsx,json,ts,tsx,css,html}\"",
     "test": "mocha --config ./test/mocharc.nightly.json"
   },
   "packageManager": "yarn@3.2.0"
