@@ -1,4 +1,4 @@
-import {setUri , login , logout} from './userSlice';
+import { setUri, login, logout } from "./userSlice";
 import Connector from "@vite/connector";
 import { ViteAPI ,accountBlock } from "@vite/vitejs";
 import sunkCostGame from "../contract/sunkCostGame_abi.json";
@@ -10,13 +10,13 @@ let contract;
 let beneficiaryAddress;
 let vc;
 
-export const TryConnect = ()=>{
-  provider = new ViteAPI(
-    new HTTP_RPC(sunkCostGameContract.networkHTTP),
-    () => {
-      console.log("Vite provider connected");
-    }
-  );
+export const TryConnect = () => {
+    provider = new ViteAPI(
+        new HTTP_RPC(sunkCostGameContract.networkHTTP),
+        () => {
+            console.log("Vite provider connected");
+        }
+    );
 
   contract = {
     address: sunkCostGameContract.address,
@@ -28,26 +28,25 @@ export const TryConnect = ()=>{
   console.log("App created" , beneficiaryAddress);
 }
 
-export const Login = () => async dispatch => {
+export const Login = () => async (dispatch) => {
     vc = new Connector({ bridge: sunkCostGameContract.bridgeWS });
     await vc.createSession();
     const uri = vc.uri;
     dispatch(setUri(uri));
     vc.on("connect", (err: any, payload: any) => {
-      // vcInstance can start prompting transactions on the user's Vite wallet app
-      console.log("WalletConnector.connect", err, payload, vc.session);
-      dispatch(login(vc.session.accounts[0]))
-      
+        // vcInstance can start prompting transactions on the user's Vite wallet app
+        console.log("WalletConnector.connect", err, payload, vc.session);
+        dispatch(login(vc.session.accounts[0]));
     });
     vc.on("disconnect", (err: any, payload: any) => {
-      console.log("WalletConnector.disconnect", err, payload);
-      // User's Vite wallet app is no longer connected
-      Logout();
-      vc.stopBizHeartBeat();
+        console.log("WalletConnector.disconnect", err, payload);
+        // User's Vite wallet app is no longer connected
+        Logout();
+        vc.stopBizHeartBeat();
     });
-  };
+};
 
-export const Logout = () => async dispatch => {
+export const Logout = () => async (dispatch) => {
     await vc.killSession();
     await vc.destroy();
     dispatch(logout());
