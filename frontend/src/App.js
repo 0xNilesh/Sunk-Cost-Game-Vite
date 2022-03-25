@@ -8,7 +8,7 @@ import Header from "./components/Header";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { light, dark } from "./config/themization";
 import QRCode from "qrcode.react";
-import { TryConnect, Login, Logout, ContractOwner } from "./redux/action.tsx";
+import { TryConnect, Login, Logout, CreatePot , ContractQuery , ContractInfo } from "./redux/actions/action.ts";
 import { useSelector, useDispatch } from "react-redux";
 
 const useDarkMode = () => {
@@ -39,7 +39,9 @@ const App = () => {
                 {" "}
                 {user.uri && <QRCode value={user.uri} />}
             </h1>
-            <button onClick={async () => await ContractOwner(user)}></button>
+            <button onClick={async () => await CreatePot(user,5)}></button>
+            <button onClick={async () => await ContractQuery("owner" , [])}></button>
+            <button onClick={async () => await ContractInfo()}></button>
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/profile" element={<Profile />} />
