@@ -1,32 +1,34 @@
 import { setUri, login, logout } from "../slice/userSlice";
 import Connector from "@vite/connector";
 import { ViteAPI, accountBlock , abi , utils } from "@vite/vitejs";
+import {HTTP_RPC , WS_RPC } from "@vite/vitejs-http";
 import sunkCostGame from "../../contract/sunkCostGame_abi.json";
 import sunkCostGameContract from "../../contract/sunkCostGame_contract.json";
-import { createUnparsedSourceFile } from "typescript";
-import * as Utils from './utils.ts';
-
-const { HTTP_RPC } = require("@vite/vitejs-http");
+import * as Utils from './utils';
+import Provider from '@vite/vitejs-ws';
 
 let provider;
 let contract;
 let vc;
+const providerTimeout = 60000;
+const providerOptions = { retryTimes: 10, retryInterval: 5000 };
 
 export const TryConnect = () => {
-    console.log(ViteAPI);
-    console.log(accountBlock);
-    provider = new ViteAPI(
-        new HTTP_RPC(sunkCostGameContract.networkHTTP),
-        () => {
-            console.log("Vite provider connected");
-        }
-    );
+    const WS_RPC = new Provider(sunkCostGameContract.networkWS, providerTimeout, providerOptions);
+    provider = new ViteAPI(WS_RPC, () => {
+    console.log('client connected');
+    });
+    // provider = new ViteAPI(
+    //     new HTTP_RPC(sunkCostGameContract.networkHTTP),
+    //     () => {
+    //         console.log("Vite provider connected");
+    //     }
+    // );
 
     contract = {
         address: sunkCostGameContract.address,
         abi: sunkCostGame,
-        provider: provider,
-        offchainCode: sunkCostGameContract.code
+        provider: provider
     };
 };
 
@@ -127,6 +129,7 @@ export const ContractInfo = async () => {
 }
 
 export const ContractQuery = async (methodName: string, params:any[]) => {
+   
     const methodAbi = contract.abi.find((x: { name: string; }) => {
       return x.name === methodName;
     });
@@ -136,19 +139,9 @@ export const ContractQuery = async (methodName: string, params:any[]) => {
 
     let data = abi.encodeFunctionCall(methodAbi, params);
     let dataBase64 = Buffer.from(data, 'hex').toString('base64');
-    let codeBase64;
-    if (contract.offchainCode && contract.offchainCode.length > 0)
-      codeBase64 = Buffer.from(contract.offchainCode, 'hex').toString('base64');
 
     while(true) {
-        console.log("Y");
-      let result = codeBase64 ? 
-        await provider.request("contract_callOffChainMethod", {
-          address: contract.address,
-          code: codeBase64,
-          data: dataBase64
-        }) : 
-        await provider.request("contract_query", {
+      let result = await provider.request("contract_query", {
           address: contract.address,
           data: dataBase64
         });

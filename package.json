@@ -20,7 +20,8 @@
     },
     "scripts": {
         "format": "prettier --write \"./*.{js,jsx,json,ts,tsx,css,html}\" \"./*/*.{js,jsx,json,ts,tsx,css,html}\" \"./*/*/*.{js,jsx,json,ts,tsx,css,html}\" \"./*/*/*/*.{js,jsx,json,ts,tsx,css,html}\"",
-        "test": "mocha --config ./test/mocharc.nightly.json"
+        "test": "mocha --config ./test/mocharc.nightly.json",
+        "deployContract": "mocha --config ./deploy/mocharc.nightly.json"
     },
     "packageManager": "yarn@3.2.0"
 }
