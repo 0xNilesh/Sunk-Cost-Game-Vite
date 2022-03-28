@@ -1,6 +1,5 @@
 {
-    "address": "vite_55c92b33cfcb3726405844155ad76a6dccf25f240ad2aaf786",
-    "networkHTTP": "http://localhost:23457",
-    "networkWS": "ws://localhost:23457",
+    "address": "vite_98cdc921ab57e0bb1df560dc57097467503afca3e70ff68b02",
+    "networkHTTP": "https://buidl.vite.net/gvite",
     "bridgeWS": "wss://biforst.vite.net"
 }

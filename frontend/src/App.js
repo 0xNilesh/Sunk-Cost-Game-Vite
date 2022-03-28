@@ -11,10 +11,9 @@ import QRCode from "qrcode.react";
 import {
     TryConnect,
     Login,
-    Logout,
-    CreatePot,
     ContractQuery,
-    ContractInfo,
+    CreatePot,
+    GetPotData
 } from "./redux/actions/action.ts";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -33,6 +32,7 @@ const App = () => {
     useEffect(async () => {
         TryConnect();
         await dispatch(Login());
+        await dispatch(GetPotData());
     }, []);
 
     const user = useSelector((state) => state.user);
@@ -47,8 +47,7 @@ const App = () => {
                 {user.uri && <QRCode value={user.uri} />}
             </h1>
             <button onClick={async () => await CreatePot(user,5)}></button>
-            <button onClick={async () => await ContractQuery("owner")}></button>
-            <button onClick={async () => await ContractInfo()}></button>
+            <button onClick={async () => await ContractQuery("owner",[])}></button>
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/profile" element={<Profile />} />
