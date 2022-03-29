@@ -5,6 +5,7 @@ import Profile from "./pages/profile";
 import Pots from "./pages/pots";
 import EachPot from "./pages/eachPot";
 import Header from "./components/Header";
+import { CssBaseline } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { light, dark } from "./config/themization";
 import QRCode from "qrcode.react";
@@ -42,6 +43,7 @@ const App = () => {
     return (
         <ThemeProvider theme={themeConfig}>
             <Header toggleTheme={toggleTheme} />
+            <CssBaseline />
             <h1 style={{ padding: "10px" }}>
                 {" "}
                 {user.uri && <QRCode value={user.uri} />}
