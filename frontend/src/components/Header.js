@@ -25,7 +25,7 @@ const Header = ({ toggleTheme }) => {
                         Logo
                     </Typography>
                     <IconButton
-                        sx={{ ml: 1 }}
+                        sx={{ ml: 5 }}
                         onClick={toggleTheme}
                         color="inherit"
                     >
@@ -39,7 +39,7 @@ const Header = ({ toggleTheme }) => {
                         <Sidebar />
                     ) : (
                         <div>
-                            <Button to="/">
+                            <Button to="/" component={Link}>
                                 <Typography color={theme.palette.white}>
                                     Home
                                 </Typography>
@@ -47,6 +47,11 @@ const Header = ({ toggleTheme }) => {
                             <Button to="/pots" component={Link}>
                                 <Typography color={theme.palette.white}>
                                     Pots
+                                </Typography>
+                            </Button>
+                            <Button to="/createpot" component={Link}>
+                                <Typography color={theme.palette.white}>
+                                    Create Pot
                                 </Typography>
                             </Button>
                             <Button to="/profile" component={Link}>

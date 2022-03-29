@@ -1,3 +1,6 @@
 import React from "react";
-const Profile = () => <div>Profile</div>;
+import SignIn from "../components/signin";
+const Profile = () => (
+    <SignIn/>
+)
 export default Profile;

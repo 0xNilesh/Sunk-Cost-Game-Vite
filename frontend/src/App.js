@@ -3,13 +3,14 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/home";
 import Profile from "./pages/profile";
 import Pots from "./pages/pots";
+import CreatePot from "./pages/createPot";
 import EachPot from "./pages/eachPot";
 import Header from "./components/Header";
 import { CssBaseline } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { light, dark } from "./config/themization";
 import QRCode from "qrcode.react";
-import { Initialize, CreatePot } from "./redux/actions/action.ts";
+import { Initialize } from "./redux/actions/action.ts";
 import { useSelector, useDispatch } from "react-redux";
 
 const useDarkMode = () => {
@@ -45,6 +46,7 @@ const App = () => {
                 <Route path="/" element={<Home />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/pots" element={<Pots />} />
+                <Route path="/createpot" element={<CreatePot />} />
                 <Route path="/pots/:num" element={<EachPot />} />
                 <Route path="*" element={<Navigate replace to="/" />} />
             </Routes>

@@ -48,6 +48,15 @@ const Sidebar = () => {
                         </ListItemText>
                     </ListItem>
                     <ListItem onClick={() => setOpenDrawer(false)}>
+                        <ListItemText>
+                            <Button to="/createpot" component={Link}>
+                                <Typography color={theme.palette.white}>
+                                    Create Pot
+                                </Typography>
+                            </Button>
+                        </ListItemText>
+                    </ListItem>
+                    <ListItem onClick={() => setOpenDrawer(false)}>
                         <Button to="/profile" component={Link}>
                             <Typography color={theme.palette.white}>
                                 Profile
