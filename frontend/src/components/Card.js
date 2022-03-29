@@ -3,6 +3,7 @@ import Card from 'react-animated-3d-card';
 import { Hashicon } from '@emeraldpay/hashicon-react';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
+import {Link} from 'react-router-dom';
 
 function getWindowDimensions() {
   const { innerWidth: width, innerHeight: height } = window;
@@ -32,6 +33,7 @@ const CardComp = (props) => {
   const { height, width } = useWindowDimensions();
 
   return(
+    <Link to={`/pots/${props.pot[12]}`}>
     <Card  className="card"     
       style={{
         backgroundColor: 'inherit',
@@ -43,21 +45,35 @@ const CardComp = (props) => {
     //   onClick={() => console.log('Card clicked')}
     >
       <div style={{textAlign : "center"}}>
-      <Hashicon value={props.pot[9]} size={100}/>
-      <Stack direction="row" mt={2} spacing={2} alignItems="center" justifyContent="center">
+      <Hashicon value={props.pot[12]} size={100}/>
+      <Stack mt={2} spacing={2} alignItems="center" justifyContent="center">
       {end <= new Date() ? 
-      <Chip label="Expired" color="error" />
+      <React.Fragment>
+        <Stack direction="row" spacing={1}>
+          <Chip label="Expired" color="error" />
+          <Chip label={`Winner : ${props.pot[5].substr(0,20) + "..."}`} color="primary" />
+        </Stack>
+      </React.Fragment>
       :
       <React.Fragment>
+      <Stack direction="row" spacing={1}>
         <Chip label="Active" color="success" />
-        <Chip label={`Current Pice : ${props.pot[7]}`} color="primary" />
+        <Chip label={`Current Pice : ${props.pot[12]}`} color="primary" />
+      </Stack>
+      {/* <Stack direction="row" spacing={1}>
+        <Chip label={`Current Buyer : ${props.pot[5].substr(0,20) + "..."}`} color="primary" />
+      </Stack>
+      <Stack direction="row" spacing={1}>
+        <Chip label={`EndTime : ${end}`} color="primary" />
+      </Stack> */}
       </React.Fragment>
       }
-      
+      {/* <Chip label={`Pot Amount : ${props.pot[6]}`} color="secondary" /> */}
       </Stack>
 
       </div>
         
     </Card>
+    </Link>
 )}
 export default CardComp;

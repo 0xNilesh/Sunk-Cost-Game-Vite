@@ -146,6 +146,7 @@ export const ContractQuery = async (methodName: string, params:any[]) => {
     let pots = [];
     for( let i = 0 ; i < totalPots ; i++){
         const potData = await ContractQuery("Pots", [i]);
+        potData.push(i);
         pots.push(potData);
     }
     dispatch(loadPotDetails({totalPots , pots , creationFee , creationEvents , boughtEvents , rewardClaimedEvents}));
