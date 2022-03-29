@@ -19,7 +19,7 @@ contract SunkCostGame {
     event PotBought(address _from, uint256 _potIndex, uint256 _potCurrentPrice, uint256 _potEndTime, uint256 _time);
     event CreationFeeUpdated(uint256 _newCreationFee);
     /* ------ */
-
+ 
     /* VARIABLES */
     uint256 public potCreationFee;
     address public owner;

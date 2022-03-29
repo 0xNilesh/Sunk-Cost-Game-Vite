@@ -17,7 +17,6 @@ export const userSlice = createSlice({
         },
         logout: (state) => {
             state.address = "";
-            state.uri = "";
         },
     },
 });

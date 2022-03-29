@@ -13,22 +13,24 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import SignIn from '../components/signin';
 import { useSelector} from 'react-redux'
+import Info from '../components/Info';
+import { ContractCall} from '../redux/actions/action';
 
 const CreatePot = ()=> {
 
+  const user = useSelector((state) => state.user);
+  const [error , setError] = useState("");
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    // const data = new FormData(event.currentTarget);
+    // const 
+    // validateData();
+    // is(error == "")
+    // CallContract("CreatePot" , [])
   };
-
-  const user = useSelector((state) => state.user);
-
   return (
-      <Container component="main" maxWidth="sm">
+      <Container component="main" maxWidth="md" sx={{textAlign : "center"}}>
         <CssBaseline />
         <Box
           sx={{
@@ -109,12 +111,12 @@ const CreatePot = ()=> {
             />
             <Button
               type="submit"
-              fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
               Create Pot
             </Button>
+            <Info/>
           </Box>
           :null}
         </Box>
