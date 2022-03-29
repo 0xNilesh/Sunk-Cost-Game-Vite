@@ -16,7 +16,15 @@ import { useSelector} from 'react-redux'
 import Info from '../components/Info';
 import { ContractCall} from '../redux/actions/action';
 
-const CreatePot = ()=> {
+const CreatePot = () => {
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        const data = new FormData(event.currentTarget);
+        console.log({
+            email: data.get("email"),
+            password: data.get("password"),
+        });
+    };
 
   const user = useSelector((state) => state.user);
   const [error , setError] = useState("");
