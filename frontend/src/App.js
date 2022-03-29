@@ -39,11 +39,11 @@ const App = () => {
         <ThemeProvider theme={themeConfig}>
             <Header toggleTheme={toggleTheme} />
             <CssBaseline />
-            <h1 style={{ padding: "10px" }}>
+            {/* <h1 style={{ padding: "10px" }}>
                 {" "}
                 {user.uri && <QRCode value={user.uri} />}
             </h1>
-            <button onClick={async () => await CreatePot(user, 5)}></button>
+            <button onClick={async () => await CreatePot(user, 5)}></button> */}
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/profile" element={<Profile />} />
