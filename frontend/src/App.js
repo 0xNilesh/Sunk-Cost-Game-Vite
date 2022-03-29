@@ -12,6 +12,7 @@ import { light, dark } from "./config/themization";
 import QRCode from "qrcode.react";
 import { Initialize } from "./redux/actions/action.ts";
 import { useSelector, useDispatch } from "react-redux";
+import { GetPotData } from "./redux/actions/action";
 
 const useDarkMode = () => {
     const [theme, setTheme] = useState(dark);
@@ -28,6 +29,12 @@ const App = () => {
     useEffect(async () => {
         await dispatch(Initialize());
     }, []);
+    
+    useEffect(() => {
+        setInterval(() => {
+          dispatch(GetPotData())
+        }, 5000);
+      }, []);
 
     const user = useSelector((state) => state.user);
     const [theme, toggleTheme] = useDarkMode();

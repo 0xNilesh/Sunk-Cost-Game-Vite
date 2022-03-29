@@ -33,7 +33,7 @@ const CreatePot = () => {
 
     try{
       await ContractCall(user , "createPot" , [initialTimer , maxTimer , buyInIncrementAmount , burnAmount , timeExtension , tokenid] , parseInt(fee) , "tti_5649544520544f4b454e6e40");
-      await setTimeout(()=> dispatch(GetPotData()) , navigate("/pots") , 5000);
+      navigate("/pots");
     }
     catch(err){
       setError(err.message);
@@ -68,6 +68,7 @@ const CreatePot = () => {
               label="Initial Timer (Enter in sec)"
               name="initialTimer"
               autoFocus
+              defaultValue={600}
               placeholder='Initial Timer for which a Pot remains valid'
             />
             <TextField
@@ -78,6 +79,7 @@ const CreatePot = () => {
               label="Max Timer Limit (Enter in sec)"
               name="maxTimer"
               autoFocus
+              defaultValue={60}
               placeholder='Max Time limit upto which end time be extended when players buy in'
             />
             <TextField
@@ -85,9 +87,10 @@ const CreatePot = () => {
               required
               fullWidth
               id="buyInIncrementAmount"
-              label="Buy In Increment Amount"
+              label="Buy In Increment Amount (in Smallest Unit of Token)"
               name="buyInIncrementAmount"
               autoFocus
+              defaultValue={1000000000000000000}
               placeholder='Amount by which Pot Price is increased at each buy in'
             />
             <TextField
@@ -95,9 +98,10 @@ const CreatePot = () => {
               required
               fullWidth
               id="burnAmount"
-              label="Burn Amount"
+              label="Burn Amount (in Smallest Unit of Token)"
               name="burnAmount"
               autoFocus
+              defaultValue={0}
               placeholder='Enter Amount to be burned at each buy in'
             />
             <TextField
@@ -108,6 +112,7 @@ const CreatePot = () => {
               label="Time Extension (in sec)"
               name="timeExtension"
               autoFocus
+              defaultValue={10}
               placeholder='Time by which end time is increased at each buy in'
             />
             <TextField
@@ -116,6 +121,7 @@ const CreatePot = () => {
               fullWidth
               id="tokenid"
               label="Token ID"
+              defaultValue="tti_5649544520544f4b454e6e40"
               name="tokenid"
               autoFocus
               placeholder='Token ID of token in which the pot should be purchased by each player'

@@ -31,7 +31,7 @@ const Sidebar = () => {
                 >
                     <ListItem onClick={() => setOpenDrawer(false)}>
                         <ListItemText>
-                            <Button to="/">
+                            <Button to="/" component={Link}>
                                 <Typography color={theme.palette.white}>
                                     Home
                                 </Typography>

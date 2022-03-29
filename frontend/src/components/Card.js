@@ -61,7 +61,7 @@ const CardComp = (props) => {
                                     <Chip label="Expired" color="error" />
                                     <Chip
                                         label={`Winner : ${
-                                            props.pot[5].substr(0, 20) + "..."
+                                            props.pot[5].substr(0, 10) + "..."
                                         }`}
                                         color="primary"
                                     />

@@ -121,7 +121,7 @@ const EachPot = () => {
             notifyWarn("Reward already claimed");
             return;
         }
-        await ContractCall(user, "claimReward", [potData[12]], 0, "");
+        await ContractCall(user, "claimReward", [potData[12]], 0, potData[8]);
     };
 
     const buyPot = async () => {
