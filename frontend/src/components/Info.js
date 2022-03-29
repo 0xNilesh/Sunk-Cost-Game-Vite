@@ -1,10 +1,10 @@
 import React from "react";
 import { Container } from "@mui/material";
-import { useSelector } from 'react-redux';
+import { useSelector } from "react-redux";
 
 const Info = () => {
     return (
-        <Container style={{textAlign : "center"}}>
+        <Container style={{ textAlign: "center" }}>
             <h4>Info/Rules Regarding Pot Creation</h4>
             <ul style={{textAlign : "left"}}>
                 <li><h5>A User needs to pay 10 (amount in Vite) to create a pot</h5></li>
@@ -18,6 +18,6 @@ const Info = () => {
                 <li><h5>Token ID refers to the token which will be used to buy in the pot</h5></li>
             </ul>
         </Container>
-    )
-}
+    );
+};
 export default Info;
