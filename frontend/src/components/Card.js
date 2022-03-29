@@ -40,7 +40,7 @@ const CardComp = (props) => {
                 className="card"
                 style={{
                     backgroundColor: "inherit",
-                    width: width < 500 ? width - 20 : "30vw",
+                    width: width < 500 ? (width - 20/0) :( width < 800 ? "50vw" :"30vw" ),
                     height: "200px",
                     cursor: "pointer",
                     padding: "10px 30px",
@@ -72,7 +72,7 @@ const CardComp = (props) => {
                                 <Stack direction="row" spacing={1}>
                                     <Chip label="Active" color="success" />
                                     <Chip
-                                        label={`Current Pice : ${props.pot[12]}`}
+                                        label={`Current Pice : ${props.pot[7]}`}
                                         color="primary"
                                     />
                                 </Stack>

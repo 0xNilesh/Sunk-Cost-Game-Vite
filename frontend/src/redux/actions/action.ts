@@ -94,6 +94,7 @@ export const ContractQuery = async (methodName: string, params:any[]) => {
   }
 
   export const ContractCall = async (user:any, methodName: string, params:any[] , amount: number , tokenId : string ) => {
+    console.log(amount ,tokenId , methodName , user , params);
     const methodAbi = contract.abi.find(
         (x: any) => x.name === methodName && x.type === "function"
     );
@@ -104,7 +105,7 @@ export const ContractQuery = async (methodName: string, params:any[]) => {
         throw new Error("User Not Authenticated");
     }
 
-    // const viteValue = 10n ** 18n * BigInt(amount);
+    const viteValue = 10n ** 18n * BigInt(amount);
 
     const block = await accountBlock.createAccountBlock("callContract", {
         address: user.address,
@@ -113,7 +114,7 @@ export const ContractQuery = async (methodName: string, params:any[]) => {
         params : params,
         // params: ['300000' , '200000' , '10' , '5' , '20000' , 'tti_5649544520544f4b454e6e40'],
         tokenId: tokenId,
-        amount: amount,
+        amount: viteValue.toString(),
     }).accountBlock;
 
     const result = await new Promise((resolve, reject) => {

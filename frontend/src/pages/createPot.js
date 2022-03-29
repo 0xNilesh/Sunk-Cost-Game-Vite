@@ -1,41 +1,44 @@
-import * as React from 'react';
+import React , {useState} from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import SignIn from '../components/signin';
-import { useSelector} from 'react-redux'
+import { useSelector , useDispatch} from 'react-redux'
 import Info from '../components/Info';
-import { ContractCall} from '../redux/actions/action';
+import { ContractCall , GetPotData} from '../redux/actions/action';
+import { useNavigate } from 'react-router-dom';
 
 const CreatePot = () => {
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        console.log({
-            email: data.get("email"),
-            password: data.get("password"),
-        });
-    };
 
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
+  const fee = useSelector((state) => state.pots.creationFee);
   const [error , setError] = useState("");
-
-  const handleSubmit = (event) => {
+  const navigate = useNavigate();
+  const handleSubmit = async (event) => {
+    setError("");
     event.preventDefault();
-    // const data = new FormData(event.currentTarget);
-    // const 
-    // validateData();
-    // is(error == "")
-    // CallContract("CreatePot" , [])
+    const data = new FormData(event.currentTarget);
+    const initialTimer = data.get("initialTimer");
+    const maxTimer = data.get("maxTimer");
+    const buyInIncrementAmount = data.get("buyInIncrementAmount");
+    const burnAmount = data.get("burnAmount");
+    const timeExtension = data.get("timeExtension");
+    const tokenid = data.get("tokenid");
+
+    try{
+      await ContractCall(user , "createPot" , [initialTimer , maxTimer , buyInIncrementAmount , burnAmount , timeExtension , tokenid] , parseInt(fee) , "tti_5649544520544f4b454e6e40");
+      await setTimeout(()=> dispatch(GetPotData()) , navigate("/pots") , 5000);
+    }
+    catch(err){
+      setError(err.message);
+    }
+    
   };
   return (
       <Container component="main" maxWidth="md" sx={{textAlign : "center"}}>
@@ -124,6 +127,7 @@ const CreatePot = () => {
             >
               Create Pot
             </Button>
+            <h3 style={{color :"red"}}>{error}</h3>
             <Info/>
           </Box>
           :null}
