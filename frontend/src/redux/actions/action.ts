@@ -1,35 +1,40 @@
 import { setUri, login, logout } from "../slice/userSlice";
-import {loadPots} from '../slice/potSlice';
+import {loadPotDetails , setCreationFee , setEvents} from '../slice/potSlice';
 import Connector from "@vite/connector";
 import { ViteAPI, accountBlock , abi , utils } from "@vite/vitejs";
 import {HTTP_RPC} from "@vite/vitejs-http";
 import sunkCostGame from "../../contract/sunkCostGame_abi.json";
 import sunkCostGameContract from "../../contract/sunkCostGame_contract.json";
 import * as Utils from './utils';
-import Pots from "../../pages/pots";
-
 
 let provider;
 let contract;
 let vc;
 const viteTokenId = "tti_5649544520544f4b454e6e40";
 
-export const TryConnect = () => {
+export const Initialize = () => async(dispatch) => {
+
+    //set the network provider
     provider = new ViteAPI(
         new HTTP_RPC(sunkCostGameContract.networkHTTP),
-        () => {
-            console.log("Vite provider connected");
-        }
+        () => console.log("Vite provider connected")
     );
 
+    //set contract details
     contract = {
         address: sunkCostGameContract.address,
         abi: sunkCostGame,
         provider: provider
     };
+
+    //iniialize wallet Connect Login
+    await dispatch(Login());
+
+    //load data from contract
+    await dispatch(GetPotData());
 };
 
-export const Login = () => async (dispatch) => {
+const Login = () => async (dispatch) => {
     vc = new Connector({ bridge: sunkCostGameContract.bridgeWS });
     await vc.createSession();
     const uri = vc.uri;
@@ -47,52 +52,10 @@ export const Login = () => async (dispatch) => {
     });
 };
 
-export const Logout = () => async (dispatch) => {
+const Logout = () => async (dispatch) => {
     await vc.killSession();
     await vc.destroy();
     dispatch(logout());
-};
-
-export const CreatePot = async (user , amount) => {
-    const methodName = "createPot";
-    const methodAbi = contract.abi.find(
-        (x: any) => x.name === methodName && x.type === "function"
-    );
-    if (!methodAbi) {
-        console.log("Medthod Not Found");
-        return;
-    }
-
-    const viteTokenId = "tti_5649544520544f4b454e6e40";
-    const viteValue = 10n ** 18n * BigInt(amount);
-
-    const block = await accountBlock.createAccountBlock("callContract", {
-        address: user.address,
-        abi: methodAbi,
-        toAddress: contract.address,
-        params: ['300000' , '200000' , '10' , '5' , '20000' , 'tti_5649544520544f4b454e6e40'],
-        tokenId: viteTokenId,
-        amount: viteValue.toString(),
-    }).accountBlock;
-
-    const result = await new Promise((resolve, reject) => {
-        vc.on("disconnect", () => {
-            reject({ code: 11020, message: "broken link" });
-        });
-
-        vc.sendCustomRequest({
-            method: "vite_signAndSendTx",
-            params: [{ block }],
-        })
-            .then((r) => {
-                resolve(r);
-            })
-            .catch((e) => {
-                reject(e);
-            });
-    });
-
-    console.log(result);
 };
 
 export const ContractQuery = async (methodName: string, params:any[]) => {
@@ -173,12 +136,120 @@ export const ContractQuery = async (methodName: string, params:any[]) => {
     return result;
   }
 
-export const GetPotData = () => async dispatch => {
-    const [totalPotsCreated] = await ContractQuery("totalPotsCreated",[]);
+  export const GetPotData = () => async dispatch => {
+    const [totalPots] = await ContractQuery("totalPotsCreated",[]);
+    const [creationFee] = await ContractQuery("potCreationFee",[]);
+    const creationEvents = await ScanEvents( "0","PotCreated");
+    const rewardClaimedEvents = await ScanEvents("0" , "RewardClaimed");
+    const boughtEvents = await ScanEvents("0", "PotBought");
+
     let pots = [];
-    for( let i = 0 ; i < totalPotsCreated ; i++){
+    for( let i = 0 ; i < totalPots ; i++){
         const potData = await ContractQuery("Pots", [i]);
         pots.push(potData);
     }
-    dispatch(loadPots(pots));
+    dispatch(loadPotDetails({totalPots , pots , creationFee , creationEvents , boughtEvents , rewardClaimedEvents}));
 }
+
+
+export const ScanEvents = async (fromHeight: string,eventName: string) => {
+
+    let heightRange = {[contract.address]: {
+        fromHeight: fromHeight.toString(),
+        toHeight: "0",
+      },
+    };
+
+    const vmLogs = await provider.request("ledger_getVmLogsByFilter", {
+      addressHeightRange: heightRange,
+    });
+  
+    if (!vmLogs) {
+      return [];
+    }
+
+    const eventAbi = contract.abi.find(
+      (item: { name: string; type: string }) =>
+        item.type === "event" && item.name === eventName
+    );
+  
+    const events = vmLogs.filter((x: any) => {
+      return encodeLogId(eventAbi) === x.vmlog.topics[0];
+    });
+  
+    if (!events || events.length === 0) {
+      return [];
+    }
+  
+    return events.map((input: any) => {
+      const event: any = decodeEvent(input.vmlog, contract.abi, eventName);
+      return {
+        event: event,
+        height: input.accountBlockHeight,
+        hash: input.accountBlockHash,
+      };
+    });
+  }
+  
+
+const decodeEvent = (log: any,abiArr: Array<{ name: string; type: string }>,name: string) => {
+    const result = abi.decodeLog(
+      abiArr,
+      Buffer.from(log.data ? log.data : "", "base64").toString("hex"),
+      log.topics.slice(1, log.topics.length),
+      name
+    );
+    return Object.assign(result, { name: name });
+}
+  
+const encodeLogId = (item: { name: string; type: string }) => {
+    let id = "";
+    if (item.type === "function") {
+      id = abi.encodeFunctionSignature(item);
+    } else if (item.type === "event") {
+      id = abi.encodeLogSignature(item);
+    }
+    return id;
+}
+
+export const CreatePot = async (user , amount) => {
+    const methodName = "createPot";
+    const methodAbi = contract.abi.find(
+        (x: any) => x.name === methodName && x.type === "function"
+    );
+    if (!methodAbi) {
+        console.log("Medthod Not Found");
+        return;
+    }
+
+    const viteTokenId = "tti_5649544520544f4b454e6e40";
+    const viteValue = 10n ** 18n * BigInt(amount);
+
+    const block = await accountBlock.createAccountBlock("callContract", {
+        address: user.address,
+        abi: methodAbi,
+        toAddress: contract.address,
+        params: ['300000' , '200000' , '10' , '5' , '20000' , 'tti_5649544520544f4b454e6e40'],
+        tokenId: viteTokenId,
+        amount: viteValue.toString(),
+    }).accountBlock;
+
+    const result = await new Promise((resolve, reject) => {
+        vc.on("disconnect", () => {
+            reject({ code: 11020, message: "broken link" });
+        });
+
+        vc.sendCustomRequest({
+            method: "vite_signAndSendTx",
+            params: [{ block }],
+        })
+            .then((r) => {
+                resolve(r);
+            })
+            .catch((e) => {
+                reject(e);
+            });
+    });
+
+    console.log(result);
+};
