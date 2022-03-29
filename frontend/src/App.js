@@ -9,10 +9,7 @@ import { CssBaseline } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { light, dark } from "./config/themization";
 import QRCode from "qrcode.react";
-import {
-    Initialize,
-    CreatePot,
-} from "./redux/actions/action.ts";
+import { Initialize, CreatePot } from "./redux/actions/action.ts";
 import { useSelector, useDispatch } from "react-redux";
 
 const useDarkMode = () => {
