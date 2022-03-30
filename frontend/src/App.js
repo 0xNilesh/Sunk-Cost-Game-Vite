@@ -44,8 +44,20 @@ const App = () => {
         <ThemeProvider theme={themeConfig}>
             <Header toggleTheme={toggleTheme} />
             <CssBaseline />
-            <button onClick={async () => await ContractQuery("owner" , [])}></button> 
-            <button onClick={async () => await ContractCall(user , "setFee" , ["10000000000000000000"] , "0" , "tti_5649544520544f4b454e6e40")}></button>
+            <button
+                onClick={async () => await ContractQuery("owner", [])}
+            ></button>
+            <button
+                onClick={async () =>
+                    await ContractCall(
+                        user,
+                        "setFee",
+                        ["10000000000000000000"],
+                        "0",
+                        "tti_5649544520544f4b454e6e40"
+                    )
+                }
+            ></button>
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/profile" element={<Profile />} />
