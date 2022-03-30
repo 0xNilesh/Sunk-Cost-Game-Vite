@@ -29,12 +29,12 @@ const App = () => {
     useEffect(async () => {
         await dispatch(Initialize());
     }, []);
-    
+
     useEffect(() => {
         setInterval(() => {
-          dispatch(GetPotData())
+            dispatch(GetPotData());
         }, 5000);
-      }, []);
+    }, []);
 
     const user = useSelector((state) => state.user);
     const [theme, toggleTheme] = useDarkMode();
