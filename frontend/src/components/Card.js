@@ -77,7 +77,7 @@ const CardComp = (props) => {
                                 <Stack direction="row" spacing={1}>
                                     <Chip label="Active" color="success" />
                                     <Chip
-                                        label={`Current Pice : ${
+                                        label={`Current Price : ${
                                             props.pot[7].substr(0, 5) + "..."
                                         }`}
                                         color="primary"
