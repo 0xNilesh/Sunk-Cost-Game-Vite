@@ -83,10 +83,10 @@ export const ContractQuery = async (methodName: string, params:any[]) => {
         for (let i = 0; i < methodAbi.outputs.length; i++) {
             outputs.push(methodAbi.outputs[i].type);
         }
-        console.log(abi.decodeParameters(
-          outputs,
-          resultBytes
-      ));
+      //   console.log(abi.decodeParameters(
+      //     outputs,
+      //     resultBytes
+      // ));
         return abi.decodeParameters(
             outputs,
             resultBytes
@@ -97,7 +97,7 @@ export const ContractQuery = async (methodName: string, params:any[]) => {
     }    
   }
 
-  export const ContractCall = async (user:any, methodName: string, params:any[] , amount: number , tokenId : string ) => {
+  export const ContractCall = async (user:any, methodName: string, params:any[] , amount: string , tokenId : string ) => {
     console.log(amount ,tokenId , methodName , user , params);
     const methodAbi = contract.abi.find(
         (x: any) => x.name === methodName && x.type === "function"
@@ -223,7 +223,7 @@ const encodeLogId = (item: { name: string; type: string }) => {
     return id;
 }
 
-export const CreatePot = async (user , amount) => {
+export const CreatePot = async (user , amount , params) => {
     const methodName = "createPot";
     const methodAbi = contract.abi.find(
         (x: any) => x.name === methodName && x.type === "function"
@@ -240,7 +240,8 @@ export const CreatePot = async (user , amount) => {
         address: user.address,
         abi: methodAbi,
         toAddress: contract.address,
-        params: ['300000' , '200000' , '10' , '5' , '20000' , 'tti_5649544520544f4b454e6e40'],
+        params : params,
+        // params: ['300000' , '200000' , '10' , '5' , '20000' , 'tti_5649544520544f4b454e6e40'],
         tokenId: viteTokenId,
         amount: viteValue.toString(),
     }).accountBlock;

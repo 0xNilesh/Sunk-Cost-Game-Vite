@@ -14,7 +14,7 @@ import { useSelector } from "react-redux";
 import { ContractCall } from "../redux/actions/action.ts";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import { useNavigate } from "react-router-dom";
 // background-color: ${(props) => props.theme.palette.background.light};
 const CCard = styled(Box)`
     border: 3px solid;
@@ -76,13 +76,14 @@ const EachPot = () => {
     const [minutes, setMinutes] = useState("00");
     const [seconds, setSeconds] = useState("00");
     const [timeLeft, setTimeLeft] = useState(0);
-
+    const navigate = useNavigate();
     toast.configure();
 
     const potIndex = parseInt(location.pathname.substring(6));
-    const potData = useSelector((state) => state.pots.pots[potIndex]);
-
+    let potData = useSelector((state) => state.pots.pots[potIndex]);
+    if(potData === undefined) potData =["0" , "0" , "0" ,"0" ,"0" , "0" , "0" , "0" , "0" , "0" , "0" , "0" , potIndex];
     useEffect(() => {
+        if(potData === undefined)navigate("/pots");
         let end = new Date(0); // The 0 there is the key, which sets the date to the epoch
         end.setUTCSeconds(potData[10]);
         let now = new Date();
@@ -125,7 +126,7 @@ const EachPot = () => {
             notifyWarn("Reward already claimed");
             return;
         }
-        await ContractCall(user, "claimReward", [potData[12]], "0", potData[8]);
+        await ContractCall(user, "claimReward", [potData[12]], 0, potData[8]);
     };
 
     const buyPot = async () => {
@@ -142,7 +143,7 @@ const EachPot = () => {
             user,
             "buyPot",
             [potData[12]],
-            "100000000000000000000",
+            potData[7],
             potData[8]
         );
     };
@@ -153,7 +154,7 @@ const EachPot = () => {
                 <CCard mt={4}>
                     <CBox>
                         <Typography variant="h3" m={2}>
-                            Sunk Pot: #{potData[12]}
+                            FOMO Pot: #{potData[12]}
                         </Typography>
                         <Grid justifyContent="space-between">
                             <InlineBox m={2}>
@@ -230,7 +231,7 @@ const EachPot = () => {
                             )}
                         </Typography>
                         <Typography variant="h6" m={1}>
-                            Current Pot Amount: {potData[6]}
+                            Current Pot Amount: {potData[6]} (in smallest unit)
                         </Typography>
                         <Typography variant="h6" m={1}>
                             Token ID: {potData[8]}
@@ -246,7 +247,7 @@ const EachPot = () => {
                             Extension Time: {potData[4]} (in sec)
                         </Typography>
                         <Typography variant="h6" m={1}>
-                            Burn Amount: {potData[3]}
+                            Burn Amount: {potData[3]} (in smallest unit)
                         </Typography>
                     </Box>
                 </CCard>

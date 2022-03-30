@@ -10,10 +10,10 @@ import Container from "@mui/material/Container";
 import SignIn from "../components/signin";
 import { useSelector, useDispatch } from "react-redux";
 import Info from "../components/Info";
-import { ContractCall } from "../redux/actions/action";
+import { ContractCall , CreatePot } from "../redux/actions/action";
 import { useNavigate } from "react-router-dom";
 
-const CreatePot = () => {
+const ReatePot = () => {
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user);
     const fee = useSelector((state) => state.pots.creationFee);
@@ -30,21 +30,28 @@ const CreatePot = () => {
         const timeExtension = data.get("timeExtension");
         const tokenid = data.get("tokenid");
 
-        try {
-            await ContractCall(
-                user,
-                "createPot",
-                [
+        try { await CreatePot(user , 10 , [
                     initialTimer,
                     maxTimer,
                     buyInIncrementAmount,
                     burnAmount,
                     timeExtension,
                     tokenid,
-                ],
-                fee,
-                "tti_5649544520544f4b454e6e40"
-            );
+                ],);
+            // await ContractCall(
+            //     user,
+            //     "createPot",
+            //     [
+            //         initialTimer,
+            //         maxTimer,
+            //         buyInIncrementAmount,
+            //         burnAmount,
+            //         timeExtension,
+            //         tokenid,
+            //     ],
+            //     10,
+            //     "tti_5649544520544f4b454e6e40"
+            // );
             navigate("/pots");
         } catch (err) {
             setError(err.message);
@@ -83,7 +90,6 @@ const CreatePot = () => {
                             label="Initial Timer (Enter in sec)"
                             name="initialTimer"
                             autoFocus
-                            defaultValue={600}
                             placeholder="Initial Timer for which a Pot remains valid"
                         />
                         <TextField
@@ -94,7 +100,6 @@ const CreatePot = () => {
                             label="Max Timer Limit (Enter in sec)"
                             name="maxTimer"
                             autoFocus
-                            defaultValue={60}
                             placeholder="Max Time limit upto which end time be extended when players buy in"
                         />
                         <TextField
@@ -105,7 +110,6 @@ const CreatePot = () => {
                             label="Buy In Increment Amount (in Smallest Unit of Token)"
                             name="buyInIncrementAmount"
                             autoFocus
-                            defaultValue={1000000000000000000}
                             placeholder="Amount by which Pot Price is increased at each buy in"
                         />
                         <TextField
@@ -116,7 +120,6 @@ const CreatePot = () => {
                             label="Burn Amount (in Smallest Unit of Token)"
                             name="burnAmount"
                             autoFocus
-                            defaultValue={0}
                             placeholder="Enter Amount to be burned at each buy in"
                         />
                         <TextField
@@ -127,7 +130,6 @@ const CreatePot = () => {
                             label="Time Extension (in sec)"
                             name="timeExtension"
                             autoFocus
-                            defaultValue={10}
                             placeholder="Time by which end time is increased at each buy in"
                         />
                         <TextField
@@ -157,4 +159,4 @@ const CreatePot = () => {
     );
 };
 
-export default CreatePot;
+export default ReatePot;
