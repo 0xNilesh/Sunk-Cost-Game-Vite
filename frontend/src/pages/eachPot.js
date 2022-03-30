@@ -81,9 +81,24 @@ const EachPot = () => {
 
     const potIndex = parseInt(location.pathname.substring(6));
     let potData = useSelector((state) => state.pots.pots[potIndex]);
-    if(potData === undefined) potData =["0" , "0" , "0" ,"0" ,"0" , "0" , "0" , "0" , "0" , "0" , "0" , "0" , potIndex];
+    if (potData === undefined)
+        potData = [
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            potIndex,
+        ];
     useEffect(() => {
-        if(potData === undefined)navigate("/pots");
+        if (potData === undefined) navigate("/pots");
         let end = new Date(0); // The 0 there is the key, which sets the date to the epoch
         end.setUTCSeconds(potData[10]);
         let now = new Date();

@@ -10,7 +10,7 @@ import Container from "@mui/material/Container";
 import SignIn from "../components/signin";
 import { useSelector, useDispatch } from "react-redux";
 import Info from "../components/Info";
-import { ContractCall , CreatePot } from "../redux/actions/action";
+import { ContractCall, CreatePot } from "../redux/actions/action";
 import { useNavigate } from "react-router-dom";
 
 const ReatePot = () => {
@@ -30,14 +30,15 @@ const ReatePot = () => {
         const timeExtension = data.get("timeExtension");
         const tokenid = data.get("tokenid");
 
-        try { await CreatePot(user , 10 , [
-                    initialTimer,
-                    maxTimer,
-                    buyInIncrementAmount,
-                    burnAmount,
-                    timeExtension,
-                    tokenid,
-                ],);
+        try {
+            await CreatePot(user, 10, [
+                initialTimer,
+                maxTimer,
+                buyInIncrementAmount,
+                burnAmount,
+                timeExtension,
+                tokenid,
+            ]);
             // await ContractCall(
             //     user,
             //     "createPot",
