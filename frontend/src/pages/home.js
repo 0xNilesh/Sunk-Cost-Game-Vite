@@ -1,4 +1,4 @@
-import { Box, Grid, Button, Typography } from "@mui/material";
+import { Box, Grid, Button, Typography, Container } from "@mui/material";
 import React from "react";
 import PiggyBank from "../Assets/piggybank.png";
 import { useTheme, styled } from "@mui/material/styles";
@@ -121,11 +121,99 @@ const Home = () => {
                             flexDirection="row"
                             justifyContent="center"
                         ></Box>
-                        <Box p={1} m={1}></Box>
-                        <Box p={1} m={1}></Box>
                     </Box>
                 </Grid>
             </Grid>
+            <Container maxWidth="md">
+                <Box p={1} m={1} mt={4}>
+                    <Typography variant="h3" sx={{ textAlign: "center" }}>
+                        <strong>
+                            <span
+                                style={{
+                                    color: `${theme.palette.heading}`,
+                                }}
+                            >
+                                How To ...
+                            </span>{" "}
+                        </strong>
+                    </Typography>
+
+                    <CTypography variant="h5" p={2} pb={0}>
+                        <span
+                            style={{
+                                color: `${theme.palette.heading}`,
+                            }}
+                        >
+                            How to Create Pot
+                        </span>{" "}
+                    </CTypography>
+                    <Typography variant="h5" p={2}>
+                        <span
+                            style={{
+                                color: `${theme.palette.heading}`,
+                            }}
+                        >
+                            1{">"} Head Over to Create Pot Page.
+                            <br />2{">"} Sign in using Vite Connect if not
+                            signed in.
+                            <br />3{">"} Fill all the details and click on
+                            Submit.
+                        </span>{" "}
+                    </Typography>
+
+                    <CTypography variant="h5" p={2} pb={0}>
+                        <span
+                            style={{
+                                color: `${theme.palette.heading}`,
+                            }}
+                        >
+                            How to Buy Pot
+                        </span>{" "}
+                    </CTypography>
+                    <Typography variant="h5" p={2}>
+                        <span
+                            style={{
+                                color: `${theme.palette.heading}`,
+                            }}
+                        >
+                            1{">"} Head Over to Pots Page.
+                            <br />2{">"} Find any active Pot that you want to
+                            buy.
+                            <br />3{">"} Click on the Pot to open its specific
+                            Page.
+                            <br />4{">"} Click on Buy Pot and confirm the
+                            Transaction.
+                            <br />5{">"} Congrats, you're the current Winner of
+                            this Pot.
+                        </span>{" "}
+                    </Typography>
+
+                    <CTypography variant="h5" p={2} pb={0}>
+                        <span
+                            style={{
+                                color: `${theme.palette.heading}`,
+                            }}
+                        >
+                            How to Claim Reward
+                        </span>{" "}
+                    </CTypography>
+                    <Typography variant="h5" p={2}>
+                        <span
+                            style={{
+                                color: `${theme.palette.heading}`,
+                            }}
+                        >
+                            1{">"} Head Over to Pots Page.
+                            <br />2{">"} Click on the Expired Pot for which you
+                            are the Winner.
+                            <br />3{">"} Click on Claim Reward and confirm the
+                            transaction.
+                            <br />4{">"} Congrats, you've successfully claimed
+                            the reward.
+                        </span>{" "}
+                    </Typography>
+                </Box>
+            </Container>
         </Box>
     );
 };
