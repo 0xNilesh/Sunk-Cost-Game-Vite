@@ -148,7 +148,12 @@ export const ContractQuery = async (methodName: string, params:any[]) => {
     for( let i = 0 ; i < totalPots ; i++){
         const potData = await ContractQuery("Pots", [i]);
         potData.push(i);
+        var end = new Date(0);
+        end.setUTCSeconds(potData[10]);
+        const status = end <= new Date() ? "expired" : "active";
+        potData.push(status);
         pots.push(potData);
+
     }
     dispatch(loadPotDetails({totalPots , pots , creationFee , creationEvents , boughtEvents , rewardClaimedEvents}));
 }

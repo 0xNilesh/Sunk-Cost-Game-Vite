@@ -14,22 +14,6 @@ import { ContractCall, GetPotData } from "../redux/actions/action";
 import { useNavigate } from "react-router-dom";
 
 const CreatePot = () => {
-    const dispatch = useDispatch();
-    const user = useSelector((state) => state.user);
-    const fee = useSelector((state) => state.pots.creationFee);
-    const [error, setError] = useState("");
-    const navigate = useNavigate();
-    const handleSubmit = async (event) => {
-        setError("");
-        event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        const initialTimer = data.get("initialTimer");
-        const maxTimer = data.get("maxTimer");
-        const buyInIncrementAmount = data.get("buyInIncrementAmount");
-        const burnAmount = data.get("burnAmount");
-        const timeExtension = data.get("timeExtension");
-        const tokenid = data.get("tokenid");
-
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
   const fee = useSelector((state) => state.pots.creationFee);
@@ -141,96 +125,17 @@ const CreatePot = () => {
               autoFocus
               placeholder='Token ID of token in which the pot should be purchased by each player'
             />
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-                <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-                    <ShoppingBagIcon />
-                </Avatar>
-                <Typography component="h1" variant="h5">
-                    CREATE YOUR OWN POT
-                </Typography>
-                <SignIn />
-                {user.address ? (
-                    <Box
-                        component="form"
-                        onSubmit={handleSubmit}
-                        noValidate
-                        sx={{ mt: 1 }}
-                    >
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="initialTimer"
-                            label="Initial Timer (Enter in sec)"
-                            name="initialTimer"
-                            autoFocus
-                            placeholder="Initial Timer for which a Pot remains valid"
-                        />
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="maxTimer"
-                            label="Max Timer Limit (Enter in sec)"
-                            name="maxTimer"
-                            autoFocus
-                            placeholder="Max Time limit upto which end time be extended when players buy in"
-                        />
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="buyInIncrementAmount"
-                            label="Buy In Increment Amount"
-                            name="buyInIncrementAmount"
-                            autoFocus
-                            placeholder="Amount by which Pot Price is increased at each buy in"
-                        />
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="burnAmount"
-                            label="Burn Amount"
-                            name="burnAmount"
-                            autoFocus
-                            placeholder="Enter Amount to be burned at each buy in"
-                        />
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="timeExtension"
-                            label="Time Extension (in sec)"
-                            name="timeExtension"
-                            autoFocus
-                            placeholder="Time by which end time is increased at each buy in"
-                        />
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="tokenid"
-                            label="Token ID"
-                            name="tokenid"
-                            autoFocus
-                            placeholder="Token ID of token in which the pot should be purchased by each player"
-                        />
-                        <Button
-                            type="submit"
-                            variant="contained"
-                            sx={{ mt: 3, mb: 2 }}
-                        >
-                            Create Pot
-                        </Button>
-                        <h3 style={{ color: "red" }}>{error}</h3>
-                        <Info />
-                    </Box>
-                ) : null}
+              <Button
+                  type="submit"
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2 }}
+              >
+                  Create Pot
+              </Button>
+              <h3 style={{ color: "red" }}>{error}</h3>
+              <Info />
+          </Box>
+         : null}
             </Box>
         </Container>
     );
