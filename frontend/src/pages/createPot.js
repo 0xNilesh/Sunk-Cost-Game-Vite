@@ -10,7 +10,7 @@ import Container from "@mui/material/Container";
 import SignIn from "../components/signin";
 import { useSelector, useDispatch } from "react-redux";
 import Info from "../components/Info";
-import { ContractCall, GetPotData } from "../redux/actions/action";
+import { ContractCall } from "../redux/actions/action";
 import { useNavigate } from "react-router-dom";
 
 const CreatePot = () => {

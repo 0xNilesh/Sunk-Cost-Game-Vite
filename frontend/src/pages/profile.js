@@ -22,7 +22,7 @@ const Profile = () => {
             <React.Fragment>
             <Grid container spacing={2} sx={{padding : "40px 10px"}} justifyContent="center">
                 <Grid item xs={12}>
-                    <h2>Active Bought In Pots</h2>
+                    <h2>Active Bought In Pots -</h2>
                 </Grid>
                 {pots.map(each => {
                     return (
@@ -30,7 +30,7 @@ const Profile = () => {
                         {each[5] === user.address && each[13] === "active" ?
                         <Grid item sm={6} md={2}>
                             <Link to={`/pots/${each[12]}`}>
-                                <Button color="secondary">Pot{` #${each[12]}`}</Button>
+                                <Button color="secondary" variant="outlined">Pot{` #${each[12]}`}</Button>
                             </Link>
                     </Grid> : null}
                     </React.Fragment>
@@ -39,7 +39,7 @@ const Profile = () => {
             </Grid>
             <Grid container spacing={2} sx={{padding : "40px 10px 10px 10px"}} justifyContent="center">
                 <Grid item xs={12}>
-                    <h2>Pots Won</h2>
+                    <h2>Pots Won - </h2>
                 </Grid>
                 {pots.map(each => {
                     return (
@@ -47,7 +47,24 @@ const Profile = () => {
                         {each[5] === user.address && each[13] === "expired" ?
                         <Grid item sm={6} md={2}>
                             <Link to={`/pots/${each[12]}`}>
-                                <Button color="secondary">Pot{` #${each[12]}`}</Button>
+                                <Button color="secondary" variant="outlined">Pot{` #${each[12]}`}</Button>
+                            </Link>
+                    </Grid> : null}
+                    </React.Fragment>
+                    )
+                })}
+            </Grid>
+            <Grid container spacing={2} sx={{padding : "40px 10px 10px 10px"}} justifyContent="center">
+                <Grid item xs={12}>
+                    <h2>Pots Owned - </h2>
+                </Grid>
+                {pots.map(each => {
+                    return (
+                    <React.Fragment key={each[12]}>
+                        {each[0] === user.address ?
+                        <Grid item sm={6} md={2}>
+                            <Link to={`/pots/${each[12]}`}>
+                                <Button color="secondary" variant="outlined">Pot{` #${each[12]}`}</Button>
                             </Link>
                     </Grid> : null}
                     </React.Fragment>
