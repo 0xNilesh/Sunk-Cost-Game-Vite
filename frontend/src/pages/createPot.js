@@ -42,7 +42,7 @@ const CreatePot = () => {
                     timeExtension,
                     tokenid,
                 ],
-                10,
+                fee,
                 "tti_5649544520544f4b454e6e40"
             );
             navigate("/pots");

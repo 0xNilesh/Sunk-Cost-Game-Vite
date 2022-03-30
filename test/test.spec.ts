@@ -143,7 +143,7 @@ describe("SunkCostGame Tests", () => {
     //     });
     // });
 
-    describe("Pot Creation", () => {
+    // describe("Pot Creation", () => {
     //     // Dont Know
     //     // it('Fail on Amount Paid in Another Token than Vite' , async () => {
     //     //     await expect(contract.call('createPot', ['300000', '200000', '10', '5', '20000', 'tti_5649544520544f4b454e6e40'], { caller: john, amount: '10', token: 'tti_564954455820434f494e69b5' })).to.eventually.be.rejectedWith('revert');
@@ -200,45 +200,45 @@ describe("SunkCostGame Tests", () => {
     //         ).to.eventually.be.rejectedWith("revert");
     //     });
 
-        it("Pass on Valid Parameters - VITE Pot", async () => {
-            await contract.call(
-                "createPot",
-                [
-                    "300000",
-                    "200000",
-                    "10",
-                    "5",
-                    "20000",
-                    "tti_5649544520544f4b454e6e40",
-                ],
-                { caller: john, amount: "10000000000000000000" }
-            );
-            //check event
-            const events = await contract.getPastEvents("allEvents", {
-                fromHeight: 0,
-                toHeight: 50,
-            });
-            expect(events[2].returnValues._from).to.be.deep.equal(john.address);
-            expect(events[2].returnValues._potIndex).to.be.deep.equal("0");
-        });
+        // it("Pass on Valid Parameters - VITE Pot", async () => {
+        //     await contract.call(
+        //         "createPot",
+        //         [
+        //             "300000",
+        //             "200000",
+        //             "10",
+        //             "5",
+        //             "20000",
+        //             "tti_5649544520544f4b454e6e40",
+        //         ],
+        //         { caller: john, amount: "10000000000000000000" }
+        //     );
+        //     //check event
+        //     const events = await contract.getPastEvents("allEvents", {
+        //         fromHeight: 0,
+        //         toHeight: 50,
+        //     });
+        //     expect(events[2].returnValues._from).to.be.deep.equal(john.address);
+        //     expect(events[2].returnValues._potIndex).to.be.deep.equal("0");
+        // });
 
-        it("Pot Data", async () => {
-            const potData = await contract.query("Pots", ["0"]);
-            expect(potData).to.be.deep.equal([
-                john.address,
-                "200000",
-                "10",
-                "5",
-                "20000",
-                john.address,
-                "0",
-                "10",
-                "tti_5649544520544f4b454e6e40",
-                potData[9], //skip start_timestamp
-                potData[10], //skip end_timestamp
-                "0",
-            ]);
-        });
+        // it("Pot Data", async () => {
+        //     const potData = await contract.query("Pots", ["0"]);
+        //     expect(potData).to.be.deep.equal([
+        //         john.address,
+        //         "200000",
+        //         "10",
+        //         "5",
+        //         "20000",
+        //         john.address,
+        //         "0",
+        //         "10",
+        //         "tti_5649544520544f4b454e6e40",
+        //         potData[9], //skip start_timestamp
+        //         potData[10], //skip end_timestamp
+        //         "0",
+        //     ]);
+        // });
 
     //     it("Send Back Extra Amount", async () => {
     //         await contract.call(
@@ -257,7 +257,7 @@ describe("SunkCostGame Tests", () => {
     //         const final_balance = await jane.balance();
     //         expect(final_balance).to.be.deep.equal("29990"); //30000 - 10
     //     });
-    });
+    // });
 
     // describe("Buy the Pot", () => {
     //     it("Pot doesn't exist", async () => {

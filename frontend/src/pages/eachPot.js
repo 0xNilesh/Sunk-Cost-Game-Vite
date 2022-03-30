@@ -125,7 +125,7 @@ const EachPot = () => {
             notifyWarn("Reward already claimed");
             return;
         }
-        await ContractCall(user, "claimReward", [potData[12]], 0, potData[8]);
+        await ContractCall(user, "claimReward", [potData[12]], "0", potData[8]);
     };
 
     const buyPot = async () => {
@@ -142,7 +142,7 @@ const EachPot = () => {
             user,
             "buyPot",
             [potData[12]],
-            potData[7],
+            "100000000000000000000",
             potData[8]
         );
     };
@@ -236,13 +236,13 @@ const EachPot = () => {
                             Token ID: {potData[8]}
                         </Typography>
                         <Typography variant="h6" m={1}>
-                            Price: {potData[7]}
+                            Price: {potData[7]} (in smallest unit)
                         </Typography>
                         <Typography variant="h6" m={1}>
-                            Buy In Increment Amount: {potData[2]}
+                            Buy In Increment Amount: {potData[2]} (in smallest unit)
                         </Typography>
                         <Typography variant="h6" m={1}>
-                            Extension Amount: {potData[4]}
+                            Extension Time: {potData[4]} (in sec)
                         </Typography>
                         <Typography variant="h6" m={1}>
                             Burn Amount: {potData[3]}

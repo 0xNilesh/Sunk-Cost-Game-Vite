@@ -105,7 +105,7 @@ export const ContractQuery = async (methodName: string, params:any[]) => {
         throw new Error("User Not Authenticated");
     }
 
-    const viteValue = 10n ** 18n * BigInt(amount);
+    // const viteValue = 10n ** 18n * BigInt(amount);
 
     const block = await accountBlock.createAccountBlock("callContract", {
         address: user.address,
@@ -114,7 +114,7 @@ export const ContractQuery = async (methodName: string, params:any[]) => {
         params : params,
         // params: ['300000' , '200000' , '10' , '5' , '20000' , 'tti_5649544520544f4b454e6e40'],
         tokenId: tokenId,
-        amount: viteValue.toString(),
+        amount: amount,
     }).accountBlock;
 
     const result = await new Promise((resolve, reject) => {

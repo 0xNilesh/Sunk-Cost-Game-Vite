@@ -29,7 +29,7 @@ function useWindowDimensions() {
     return windowDimensions;
 }
 const CardComp = (props) => {
-    // console.log(props);
+    console.log(props);
     var end = new Date(0); // The 0 there is the key, which sets the date to the epoch
     end.setUTCSeconds(props.pot[10]);
     const { height, width } = useWindowDimensions();
