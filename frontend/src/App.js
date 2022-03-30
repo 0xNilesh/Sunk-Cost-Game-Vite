@@ -12,7 +12,11 @@ import { light, dark } from "./config/themization";
 import QRCode from "qrcode.react";
 import { Initialize } from "./redux/actions/action.ts";
 import { useSelector, useDispatch } from "react-redux";
-import { ContractQuery, GetPotData , ContractCall } from "./redux/actions/action";
+import {
+    ContractQuery,
+    GetPotData,
+    ContractCall,
+} from "./redux/actions/action";
 
 const useDarkMode = () => {
     const [theme, setTheme] = useState(dark);
