@@ -113,6 +113,10 @@ const EachPot = () => {
     const notifyWarn = (msg) => toast.warn(msg);
 
     const claimReward = async () => {
+        if (user.address === "") {
+            notifyError("User not authenticated, Kindly login and try again.");
+            return;
+        }
         if (user.address != potData[5]) {
             notifyError("Unfortunately, You're not the winner of this Pot");
             return;
