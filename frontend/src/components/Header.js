@@ -6,6 +6,8 @@ import {
     Toolbar,
     Button,
     useMediaQuery,
+    Avatar,
+    Box,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
@@ -21,9 +23,9 @@ const Header = ({ toggleTheme }) => {
         <div>
             <AppBar position="static">
                 <Toolbar>
-                    <Typography variant="h4" sx={{ flexGrow: 1 }}>
-                        Logo
-                    </Typography>
+                    <Box sx={{ flexGrow: 1 }}>
+                        <Avatar alt="Logo" src="/assets/piggybtc.png" />
+                    </Box>
                     <IconButton
                         sx={{ ml: 5 }}
                         onClick={toggleTheme}
