@@ -12,6 +12,7 @@ const light = {
             navbar: "#7e317f",
             default: "#fff",
         },
+        heading: "#2A323C",
         button: {
             primary: "#237b60",
         },
@@ -33,6 +34,7 @@ const dark = {
         button: {
             primary: "#237b60",
         },
+        heading: "#303130",
         white: "#fff",
         borderColor: "rgba(18, 18, 18, .8)",
     },
