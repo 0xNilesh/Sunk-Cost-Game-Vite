@@ -31,7 +31,7 @@ const CreatePot = () => {
     const tokenid = data.get("tokenid");
 
     try{
-      await ContractCall(user , "createPot" , [initialTimer , maxTimer , buyInIncrementAmount , burnAmount , timeExtension , tokenid] , parseInt(fee) , "tti_5649544520544f4b454e6e40");
+      await ContractCall(user , "createPot" , [initialTimer , maxTimer , buyInIncrementAmount , burnAmount , timeExtension , tokenid] , 10 , "tti_5649544520544f4b454e6e40");
       navigate("/pots");
     }
     catch(err){
