@@ -83,6 +83,10 @@ export const ContractQuery = async (methodName: string, params:any[]) => {
         for (let i = 0; i < methodAbi.outputs.length; i++) {
             outputs.push(methodAbi.outputs[i].type);
         }
+        console.log(abi.decodeParameters(
+          outputs,
+          resultBytes
+      ));
         return abi.decodeParameters(
             outputs,
             resultBytes

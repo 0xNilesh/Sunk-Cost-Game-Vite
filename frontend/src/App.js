@@ -12,7 +12,7 @@ import { light, dark } from "./config/themization";
 import QRCode from "qrcode.react";
 import { Initialize } from "./redux/actions/action.ts";
 import { useSelector, useDispatch } from "react-redux";
-import { GetPotData } from "./redux/actions/action";
+import { ContractQuery, GetPotData } from "./redux/actions/action";
 
 const useDarkMode = () => {
     const [theme, setTheme] = useState(dark);
@@ -44,11 +44,8 @@ const App = () => {
         <ThemeProvider theme={themeConfig}>
             <Header toggleTheme={toggleTheme} />
             <CssBaseline />
-            {/* <h1 style={{ padding: "10px" }}>
-                {" "}
-                {user.uri && <QRCode value={user.uri} />}
-            </h1>
-            <button onClick={async () => await CreatePot(user, 5)}></button> */}
+            <button onClick={async () => await ContractQuery("owner" , [])}></button> 
+            <button onClick={async () => await ContractCall(user , "setFee" , ["10000000000000000000"] , "0" , "tti_5649544520544f4b454e6e40")}></button>
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/profile" element={<Profile />} />
