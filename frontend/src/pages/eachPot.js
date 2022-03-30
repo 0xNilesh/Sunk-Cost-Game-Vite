@@ -239,7 +239,8 @@ const EachPot = () => {
                             Price: {potData[7]} (in smallest unit)
                         </Typography>
                         <Typography variant="h6" m={1}>
-                            Buy In Increment Amount: {potData[2]} (in smallest unit)
+                            Buy In Increment Amount: {potData[2]} (in smallest
+                            unit)
                         </Typography>
                         <Typography variant="h6" m={1}>
                             Extension Time: {potData[4]} (in sec)
