@@ -2,7 +2,7 @@
     "name": "frontend",
     "version": "0.1.0",
     "private": true,
-    "homepage": "https://fomo-pot.io",
+    "homepage": "http://nilesh46.github.io/Sunk-Cost-Game-Vite/",
     "dependencies": {
         "@emeraldpay/hashicon-react": "^0.5.2",
         "@emotion/react": "^11.8.2",
