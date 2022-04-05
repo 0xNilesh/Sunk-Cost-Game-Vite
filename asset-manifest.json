@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/Sunk-Cost-Game-Vite/static/css/main.11ab20fd.css",
-    "main.js": "/Sunk-Cost-Game-Vite/static/js/main.2331af09.js",
-    "static/js/787.cda612ba.chunk.js": "/Sunk-Cost-Game-Vite/static/js/787.cda612ba.chunk.js",
+    "main.css": "/Sunk-Cost-Game-Vite/static/css/main.ea82a2d1.css",
+    "main.js": "/Sunk-Cost-Game-Vite/static/js/main.bbf5b75d.js",
+    "static/js/787.9e9f4ffd.chunk.js": "/Sunk-Cost-Game-Vite/static/js/787.9e9f4ffd.chunk.js",
     "static/media/piggybank.png": "/Sunk-Cost-Game-Vite/static/media/piggybank.edf6d563115e55a4f06a.png",
     "index.html": "/Sunk-Cost-Game-Vite/index.html",
-    "main.11ab20fd.css.map": "/Sunk-Cost-Game-Vite/static/css/main.11ab20fd.css.map",
-    "main.2331af09.js.map": "/Sunk-Cost-Game-Vite/static/js/main.2331af09.js.map",
-    "787.cda612ba.chunk.js.map": "/Sunk-Cost-Game-Vite/static/js/787.cda612ba.chunk.js.map"
+    "main.ea82a2d1.css.map": "/Sunk-Cost-Game-Vite/static/css/main.ea82a2d1.css.map",
+    "main.bbf5b75d.js.map": "/Sunk-Cost-Game-Vite/static/js/main.bbf5b75d.js.map",
+    "787.9e9f4ffd.chunk.js.map": "/Sunk-Cost-Game-Vite/static/js/787.9e9f4ffd.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.11ab20fd.css",
-    "static/js/main.2331af09.js"
+    "static/css/main.ea82a2d1.css",
+    "static/js/main.bbf5b75d.js"
   ]
 }
