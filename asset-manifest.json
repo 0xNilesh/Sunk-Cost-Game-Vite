@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/static/css/main.11ab20fd.css",
+    "main.js": "/static/js/main.8075055b.js",
+    "static/js/787.cda612ba.chunk.js": "/static/js/787.cda612ba.chunk.js",
+    "static/media/piggybank.png": "/static/media/piggybank.edf6d563115e55a4f06a.png",
+    "index.html": "/index.html",
+    "main.11ab20fd.css.map": "/static/css/main.11ab20fd.css.map",
+    "main.8075055b.js.map": "/static/js/main.8075055b.js.map",
+    "787.cda612ba.chunk.js.map": "/static/js/787.cda612ba.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.11ab20fd.css",
+    "static/js/main.8075055b.js"
+  ]
+}
