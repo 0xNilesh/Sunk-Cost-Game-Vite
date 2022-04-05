@@ -13,7 +13,7 @@
   <p align="center">
     <a href="https://gitcoin.co/issue/vitelabs/bounties/25/100028535">Vite Hackathon</a>
     ·
-    <a href="https://fomo-pot.netlify.app/">View Demo</a>
+    <a href="https://nilesh46.github.io/Sunk-Cost-Game-Vite/">View Demo</a>
     ·
     <a href="https://github.com/nilesh46/Sunk-Cost-Game-Vite/issues">Request Feature</a>
   </p>
